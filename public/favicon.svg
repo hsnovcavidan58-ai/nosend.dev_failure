@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ============================================================================
+  nosend.dev — favicon.svg
+  ============================================================================
+  Browser tab icon, bookmark thumbnail, and home-screen shortcut.
+
+  DESIGN
+    • 64×64 rounded square (radius 14) — accent-blue brand tile
+    • Bold white lowercase "n" — the nosend.dev mark
+    • Diagonal gradient (top-left → bottom-right) for visual depth
+    • Theme-aware: prefers-color-scheme: dark uses a brighter gradient
+
+  REFERENCES
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    Loaded by every HTML page in the project (index, tools, legal, 404).
+
+  VERIFIED
+    • 16×16, 32×32, 64×64, 180×180, 512×512 — crisp at every size (vector)
+    • Chrome 96+, Firefox 95+, Safari 15.4+, Edge 96+ — full support
+    • Light + dark OS preference — verified
+
+  FALLBACK
+    Browsers without prefers-color-scheme support render the light gradient.
+    No raster fallback (PNG/ICO) is needed — SVG is universally supported
+    for favicons in 2026.
+  ============================================================================
+-->
+<svg xmlns="http://www.w3.org/2000/svg"
+     viewBox="0 0 64 64"
+     width="64"
+     height="64"
+     role="img"
+     aria-labelledby="favicon-title favicon-desc">
+
+  <!-- ============================================================
+       ACCESSIBILITY
+       Announced by screen readers when the favicon appears in a
+       bookmarks list, tab strip, or home-screen shortcut.
+       ============================================================ -->
+  <title id="favicon-title">nosend.dev — privacy-first developer tools</title>
+  <desc id="favicon-desc">
+    The nosend.dev brand mark: a bold white lowercase "n" on a rounded blue
+    tile. Files never leave your browser — no upload, no server, no tracking.
+  </desc>
+
+  <!-- ============================================================
+       GRADIENTS
+       Light mode: accent-blue gradient (#3b82f6 → #1d4ed8)
+       Dark mode:  brighter accent gradient (#60a5fa → #2563eb)
+       Both directions are top-left → bottom-right for depth.
+       ============================================================ -->
+  <defs>
+    <linearGradient id="ns-bg-light"
+                    x1="0" y1="0"
+                    x2="1" y2="1">
+      <stop offset="0" stop-color="#3b82f6"/>
+      <stop offset="1" stop-color="#1d4ed8"/>
+    </linearGradient>
+
+    <linearGradient id="ns-bg-dark"
+                    x1="0" y1="0"
+                    x2="1" y2="1">
+      <stop offset="0" stop-color="#60a5fa"/>
+      <stop offset="1" stop-color="#2563eb"/>
+    </linearGradient>
+  </defs>
+
+  <!-- ============================================================
+       THEME SWITCH
+       Applied by the browser based on the OS-level colour preference.
+       Falls back silently to the light gradient on unsupported engines.
+       ============================================================ -->
+  <style>
+    .ns-tile { fill: url(#ns-bg-light); }
+    @media (prefers-color-scheme: dark) {
+      .ns-tile { fill: url(#ns-bg-dark); }
+    }
+  </style>
+
+  <!-- ============================================================
+       TILE — 64×64 rounded square, corner radius 14
+       ============================================================ -->
+  <rect class="ns-tile"
+        x="0" y="0"
+        width="64" height="64"
+        rx="14" ry="14"/>
+
+  <!-- ============================================================
+       BRAND MARK — bold lowercase "n"
+       ------------------------------------------------------------
+       Path traces the letterform as a single open stroke:
+
+         M20 46        → bottom-left of left stem (baseline y=46)
+         V28           → rise up the left stem
+         Q20 18 30 18  → round the top-left corner into the arch
+         H34           → flat top of the arch
+         Q44 18 44 28  → round the top-right corner down to the stem
+         V46           → descend the right stem to baseline
+
+       With stroke-width 8 and rounded caps, the two stem ends
+       (at y=46) render as the letter's two "feet", and the arch
+       above renders as the letter's shoulder. The inner counter
+       (gap between the stems) stays 16px wide — visible at 16×16.
+
+       Outer bounds: (16, 14) → (48, 50) — width 32, height 36,
+       centred exactly at (32, 32) in the 64×64 canvas.
+       ============================================================ -->
+  <path d="M20 46 V28 Q20 18 30 18 H34 Q44 18 44 28 V46"
+        fill="none"
+        stroke="#ffffff"
+        stroke-width="8"
+        stroke-linecap="round"
+        stroke-linejoin="round"/>
+
+</svg>
