@@ -349,7 +349,7 @@ See [`docs/launch-checklist.md`](docs/launch-checklist.md) for the atomic weekly
 ## 📊 Project Status
 
 - [x] **Day 1 — Foundation:** `.gitignore`, `README.md`, `style.css`, `common.js`
-- [ ] **Day 2 — Template & shared resources:** `_template/tool.html`, `license.js`, `favicon.svg`, `launch-checklist.md`
+- [X] **Day 2 — Template & shared resources:** `_template/tool.html`, `license.js`, `favicon.svg`, `launch-checklist.md`
 - [ ] **Day 3 — Core pages:** `index.html`, `privacy.html`, `terms.html`, `404.html`
 - [ ] **Day 4 — SEO & Cloudflare config:** `robots.txt`, `_headers`, `_redirects`, `wrangler.toml`
 - [ ] **Day 5 — Backend & docs:** `worker/package.json`, `worker/src/index.js`, `b2b-emails.md`, `sitemap.xml`
