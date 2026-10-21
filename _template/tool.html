@@ -1,0 +1,852 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!--
+    ============================================================================
+    nosend.dev — MASTER TOOL TEMPLATE  (v2 · 2026-10-21)
+    ============================================================================
+
+    USAGE
+    -----
+    1. Copy this file to: public/tools/<your-slug>/index.html
+    2. Find & replace EVERY {{PLACEHOLDER}} below.
+    3. Fill in {{TOOL_OPTIONS}}, {{TOOL_RESULT}}, {{TOOL_LIBRARY}}.
+    4. Replace the inline <script> TODO block with real tool logic.
+    5. Delete this comment block before shipping.
+
+    PLACEHOLDERS
+    ------------
+    {{TOOL_NAME}}         Human-readable tool name        e.g. "CSV Merger"
+    {{TOOL_SLUG}}         URL slug (lowercase, hyphens)   e.g. "csv-merger"
+    {{TOOL_DESCRIPTION}}  Short description, NO trailing period AND NO
+                          trailing punctuation of any kind.
+                          ✓ "Merge multiple CSV files without uploading"
+                          ✗ "Merge multiple CSV files without uploading."
+                          The template appends " — no upload, ..." right after.
+    {{TOOL_TECH}}         Tech stack sentence             e.g. "PapaParse and Web Workers"
+    {{TOOL_LIBRARY}}      CDN <script> tag(s) — see the block at the bottom.
+    {{TOOL_OPTIONS}}      Tool-specific options UI       — see #options comment
+    {{TOOL_RESULT}}       Tool-specific result UI        — see #result comment
+    {{RELATED_TOOLS}}     Grid of related tool cards     — see #related comment
+
+    HARD RULES
+    ----------
+    • <header> and <footer> MUST stay empty — common.js injects them.
+    • Do NOT change <script src="/assets/js/common.js" defer> — required.
+    • Do NOT change <script src="/assets/js/license.js" defer>  — required.
+    • Never put secrets in this file. This is fully public HTML.
+    • All processing MUST be client-side. No fetch() that uploads.
+    • The file <input id="file-input"> MUST be configured per tool:
+        multiple      → only if the tool accepts more than 1 file
+        accept        → per-tool MIME/extension filter (see HTML comment)
+        data-max-size → optional, bytes; tools may validate in processFiles()
+    • {{TOOL_LIBRARY}} may NOT be left empty for tools that need a library.
+      Only JSON Formatter ships with zero external dependencies. If you
+      forget this block, you get "Papa is not defined" / "PDFLib is not
+      defined" at runtime and the tool silently fails.
+    • After a successful `fileInput.click()` selection, the input's value
+      is reset to '' so the SAME file can be selected again. Do not remove
+      that line.
+
+    JSON-LD NOTE
+    ------------
+    If {{TOOL_DESCRIPTION}} contains a double quote ("), escape it as \" inside
+    the JSON-LD blocks below, and as &quot; inside HTML attributes.
+    ============================================================================
+  -->
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- ============================================================
+       SEO — PRIMARY
+       ============================================================ -->
+  <title>{{TOOL_NAME}} — 100% Browser-Based, No Upload | nosend.dev</title>
+  <meta
+    name="description"
+    content="{{TOOL_DESCRIPTION}} — no upload, no server, no tracking. Your data never leaves your device."
+  >
+  <link rel="canonical" href="https://nosend.dev/tools/{{TOOL_SLUG}}/">
+  <meta name="robots" content="index, follow, max-image-preview:large">
+
+  <!-- ============================================================
+       OPEN GRAPH (Facebook / LinkedIn / Telegram / WhatsApp)
+       ============================================================ -->
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="nosend.dev">
+  <meta property="og:title" content="{{TOOL_NAME}} — Privacy-First, 100% in Your Browser">
+  <meta property="og:description" content="{{TOOL_DESCRIPTION}} — no upload, no server, no tracking.">
+  <meta property="og:url" content="https://nosend.dev/tools/{{TOOL_SLUG}}/">
+  <meta property="og:image" content="https://nosend.dev/assets/img/og-image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="nosend.dev — privacy-first developer tools">
+
+  <!-- ============================================================
+       TWITTER / X CARD
+       ============================================================ -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="{{TOOL_NAME}} — Privacy-First, 100% in Your Browser">
+  <meta name="twitter:description" content="{{TOOL_DESCRIPTION}} — no upload, no server, no tracking.">
+  <meta name="twitter:image" content="https://nosend.dev/assets/img/og-image.png">
+
+  <!-- ============================================================
+       BROWSER META
+       ============================================================ -->
+  <meta name="theme-color" content="#2563eb">
+  <meta name="format-detection" content="telephone=no">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+
+  <!-- ============================================================
+       RESOURCE HINTS
+       ============================================================ -->
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+
+  <!-- ============================================================
+       DESIGN SYSTEM (shared across all pages — do not remove)
+       ============================================================ -->
+  <link rel="stylesheet" href="/assets/css/style.css">
+
+  <!-- ============================================================
+       JSON-LD — WebApplication schema (Google rich results)
+       ============================================================ -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "{{TOOL_NAME}}",
+    "description": "{{TOOL_DESCRIPTION}} — runs 100% in your browser with no upload, no server, no tracking.",
+    "url": "https://nosend.dev/tools/{{TOOL_SLUG}}/",
+    "applicationCategory": "UtilitiesApplication",
+    "operatingSystem": "Any",
+    "browserRequirements": "Requires JavaScript",
+    "isAccessibleForFree": true,
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    },
+    "creator": {
+      "@type": "Organization",
+      "name": "nosend.dev",
+      "url": "https://nosend.dev"
+    }
+  }
+  </script>
+
+  <!-- ============================================================
+       JSON-LD — BreadcrumbList schema
+       ============================================================ -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": "https://nosend.dev/"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Tools",
+        "item": "https://nosend.dev/#tools"
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": "{{TOOL_NAME}}",
+        "item": "https://nosend.dev/tools/{{TOOL_SLUG}}/"
+      }
+    ]
+  }
+  </script>
+</head>
+
+<body>
+
+  <!-- Skip link for keyboard / screen-reader users -->
+  <a href="#main" class="skip-link">Skip to main content</a>
+
+  <!-- ============================================================
+       HEADER — MUST stay empty.
+       common.js injects logo + nav + mobile toggle.
+       ============================================================ -->
+  <header></header>
+
+  <!-- ============================================================
+       MAIN CONTENT
+       ============================================================ -->
+  <main id="main" class="container" tabindex="-1">
+
+    <!-- ---------- BREADCRUMB ---------- -->
+    <nav class="breadcrumb" aria-label="Breadcrumb">
+      <ol>
+        <li><a href="/">Home</a></li>
+        <li><a href="/#tools">Tools</a></li>
+        <li><span aria-current="page">{{TOOL_NAME}}</span></li>
+      </ol>
+    </nav>
+
+    <!-- ---------- INTRO (title + lead + privacy badge + noscript) ---------- -->
+    <section id="intro" aria-labelledby="tool-title">
+      <div class="stack">
+        <h1 id="tool-title">{{TOOL_NAME}}</h1>
+        <p class="lead">{{TOOL_DESCRIPTION}}</p>
+        <p>
+          <span class="badge badge-accent">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14"
+                 viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                 aria-hidden="true" focusable="false">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+              <polyline points="9 12 11 14 15 10"></polyline>
+            </svg>
+            Browser-based · No upload
+          </span>
+        </p>
+
+        <!-- Shown only when JavaScript is disabled -->
+        <noscript>
+          <div class="alert alert-warning" role="alert">
+            <svg class="alert-icon" xmlns="http://www.w3.org/2000/svg"
+                 width="20" height="20" viewBox="0 0 24 24" fill="none"
+                 stroke="currentColor" stroke-width="2"
+                 stroke-linecap="round" stroke-linejoin="round"
+                 aria-hidden="true" focusable="false">
+              <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+              <line x1="12" y1="9" x2="12" y2="13"></line>
+              <line x1="12" y1="17" x2="12.01" y2="17"></line>
+            </svg>
+            <p>
+              <strong>JavaScript is required.</strong>
+              This tool runs 100% in your browser — enable JavaScript to use it.
+              Nothing is ever uploaded to a server.
+            </p>
+          </div>
+        </noscript>
+      </div>
+    </section>
+
+    <!-- ---------- TOOL PANEL ---------- -->
+    <section id="tool" class="tool-panel stack"
+             aria-labelledby="tool-heading">
+      <h2 id="tool-heading" class="visually-hidden">Tool interface</h2>
+
+      <!--
+        ============================================================
+        DROPZONE
+        ============================================================
+        The whole dropzone is clickable + keyboard-accessible.
+        A hidden <input type="file"> does the real picking.
+
+        For textarea-based tools (e.g. JSON Formatter), replace the
+        <div class="dropzone"> block with a <textarea> and remove the
+        dropzone-specific JS. Everything else stays the same.
+        ============================================================
+      -->
+      <div class="dropzone"
+           id="dropzone"
+           role="button"
+           tabindex="0"
+           aria-label="Drop files here or click to browse"
+           aria-describedby="dropzone-hint">
+        <svg class="dropzone-icon" xmlns="http://www.w3.org/2000/svg"
+             width="48" height="48" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="1.5"
+             stroke-linecap="round" stroke-linejoin="round"
+             aria-hidden="true" focusable="false">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+          <polyline points="17 8 12 3 7 8"></polyline>
+          <line x1="12" y1="3" x2="12" y2="15"></line>
+        </svg>
+        <p>Drop your files here or <strong>click to browse</strong></p>
+        <small id="dropzone-hint">All processing happens locally — nothing is uploaded</small>
+
+        <!--
+          ============================================================
+          FILE INPUT — configure PER TOOL:
+          ============================================================
+          Add `multiple` if the tool accepts more than one file:
+            csv-merger, pdf-merger, image-compressor, image-converter,
+            csv-to-json — MULTIPLE
+          Omit `multiple` for single-file tools:
+            (none in the current catalog)
+
+          Add `accept` to restrict file types:
+            csv-merger, csv-to-json           → accept=".csv"
+            pdf-merger                        → accept=".pdf"
+            image-compressor, image-converter → accept="image/*"
+            json-formatter                    → textarea-based (no file input)
+
+          Optional `data-max-size` (bytes) — the JS skeleton's `processFiles`
+          can read `fileInput.dataset.maxSize` and validate with
+          `assertMaxSize(file, Number(maxSize))`.
+
+          Example (PDF Merger):
+            <input type="file" id="file-input" multiple accept=".pdf"
+                   data-max-size="52428800" hidden>
+          ============================================================
+        -->
+        <input type="file" id="file-input" hidden>
+      </div>
+
+      <!-- ---------- SELECTED FILES ---------- -->
+      <ul class="file-list" id="file-list" hidden></ul>
+
+      <!-- ---------- TOOL OPTIONS ---------- -->
+      <!--
+        ============================================================
+        {{TOOL_OPTIONS}} — replace with tool-specific options UI.
+        ============================================================
+
+        Use the design-system classes:
+
+        <label class="checkbox">
+          <input type="checkbox" id="opt-headers" checked>
+          <span>First row is header</span>
+        </label>
+
+        <div class="field">
+          <label for="opt-quality">Quality: <span id="opt-quality-val">80</span>%</label>
+          <input type="range" id="opt-quality" min="10" max="100" value="80">
+        </div>
+
+        <div class="field">
+          <label for="opt-format">Output format</label>
+          <select id="opt-format">
+            <option value="image/jpeg">JPG</option>
+            <option value="image/png">PNG</option>
+          </select>
+        </div>
+
+        ============================================================
+      -->
+      <div id="options" class="options-group" hidden>
+        <!-- {{TOOL_OPTIONS}} -->
+      </div>
+
+      <!-- ---------- ACTIONS ---------- -->
+      <div class="tool-actions" id="tool-actions" hidden>
+        <button type="button" class="btn btn-lg" id="action-btn" disabled>
+          <span class="spinner" hidden aria-hidden="true"></span>
+          <span data-label>Process</span>
+        </button>
+        <button type="button" class="btn btn-ghost" id="reset-btn">
+          Reset
+        </button>
+      </div>
+
+      <!-- ---------- PROGRESS ---------- -->
+      <div id="progress-region" hidden>
+        <div class="progress" aria-hidden="true">
+          <div class="progress-bar" id="progress-bar"></div>
+        </div>
+        <p class="text-sm text-muted" id="progress-text" aria-live="polite"></p>
+      </div>
+
+      <!-- ---------- ERROR ALERT ---------- -->
+      <div class="alert alert-error" id="error-alert" role="alert" hidden>
+        <svg class="alert-icon" xmlns="http://www.w3.org/2000/svg"
+             width="20" height="20" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2"
+             stroke-linecap="round" stroke-linejoin="round"
+             aria-hidden="true" focusable="false">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="15" y1="9" x2="9" y2="15"></line>
+          <line x1="9" y1="9" x2="15" y2="15"></line>
+        </svg>
+        <p id="error-message"></p>
+      </div>
+
+      <!-- ---------- SUCCESS ALERT ---------- -->
+      <div class="alert alert-success" id="success-alert" role="status" hidden>
+        <svg class="alert-icon" xmlns="http://www.w3.org/2000/svg"
+             width="20" height="20" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2"
+             stroke-linecap="round" stroke-linejoin="round"
+             aria-hidden="true" focusable="false">
+          <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+          <polyline points="22 4 12 14.01 9 11.01"></polyline>
+        </svg>
+        <p id="success-message"></p>
+      </div>
+
+      <!-- ---------- RESULT ---------- -->
+      <!--
+        ============================================================
+        {{TOOL_RESULT}} — replace with tool-specific result UI.
+        ============================================================
+
+        Example (download button):
+
+        <p class="text-sm text-muted" id="result-summary"></p>
+        <button type="button" class="btn btn-success" id="download-btn">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18"
+               viewBox="0 0 24 24" fill="none" stroke="currentColor"
+               stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+               aria-hidden="true">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+            <polyline points="7 10 12 15 17 10"></polyline>
+            <line x1="12" y1="15" x2="12" y2="3"></line>
+          </svg>
+          Download result
+        </button>
+
+        Example (preview):
+
+        <pre class="output" id="result-preview"></pre>
+
+        ============================================================
+      -->
+      <div id="result" class="stack" hidden aria-live="polite">
+        <!-- {{TOOL_RESULT}} -->
+      </div>
+    </section>
+
+    <!-- ---------- TRUST SECTION (shared across all tools) ---------- -->
+    <section id="trust" class="trust-section stack" aria-labelledby="trust-heading">
+      <h2 id="trust-heading">Why your file never leaves your browser</h2>
+      <p>
+        This tool runs entirely in your browser using
+        <strong>{{TOOL_TECH}}</strong>.
+        No file is uploaded to any server. No data is collected.
+        No tracking scripts are loaded.
+      </p>
+      <p>
+        Verify it yourself — open DevTools (<kbd>F12</kbd>),
+        switch to the <strong>Network</strong> tab, and process a file.
+        You will see zero upload requests.
+      </p>
+    </section>
+
+    <!-- ---------- RELATED TOOLS (shared across all tools) ---------- -->
+    <section id="related" class="related-section" aria-labelledby="related-heading">
+      <h2 id="related-heading">Other privacy-first tools</h2>
+      <div class="grid">
+        <!--
+          ============================================================
+          {{RELATED_TOOLS}} — replace with 3–5 related tool cards.
+          ============================================================
+
+          <a href="/tools/csv-merger/" class="card">
+            <h3>CSV Merger</h3>
+            <p>Merge multiple CSV files in your browser.</p>
+          </a>
+
+          <a href="/tools/csv-to-json/" class="card">
+            <h3>CSV → JSON</h3>
+            <p>Convert CSV to JSON without uploading.</p>
+          </a>
+
+          <a href="/tools/json-formatter/" class="card">
+            <h3>JSON Formatter</h3>
+            <p>Format, validate, and minify JSON locally.</p>
+          </a>
+
+          ============================================================
+        -->
+        <!-- {{RELATED_TOOLS}} -->
+      </div>
+    </section>
+  </main>
+
+  <!-- ============================================================
+       FOOTER — MUST stay empty.
+       common.js injects copyright + legal links + dynamic year.
+       ============================================================ -->
+  <footer></footer>
+
+  <!-- ============================================================
+       SHARED SCRIPTS — order matters, defer preserves it.
+       ============================================================ -->
+  <script src="/assets/js/common.js" defer></script>
+  <script src="/assets/js/license.js" defer></script>
+
+  <!-- ============================================================
+       TOOL-SPECIFIC LIBRARIES (CDN)
+       ============================================================
+       ⚠️  {{TOOL_LIBRARY}} MUST be filled in for every tool that needs a
+       library. Only JSON Formatter works with zero dependencies.
+       Forgetting this block = silent runtime failure ("X is not defined").
+
+       PapaParse (CSV tools):
+         <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js" defer></script>
+
+       pdf-lib (PDF Merger):
+         <script src="https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js" defer></script>
+
+       SheetJS (Excel — third phase):
+         <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js" defer></script>
+
+       JSZip (batch download — third phase):
+         <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js" defer></script>
+
+       OPTIONAL SECURITY — add SRI integrity hashes for public deployments:
+         <script src="..."
+                 integrity="sha384-..."
+                 crossorigin="anonymous"
+                 defer></script>
+       ============================================================ -->
+  <!-- {{TOOL_LIBRARY}} -->
+
+  <!-- ============================================================
+       TOOL-SPECIFIC LOGIC
+       ============================================================
+
+       AVAILABLE GLOBALS (after DOMContentLoaded fires):
+         window.nosendLicense.checkPremium()    → Promise<{premium, reason}>
+         window.nosendLicense.getUsageCount()   → number (current month)
+         window.nosendLicense.incrementUsage()  → void
+
+       Example usage in a tool:
+         const { premium } = await window.nosendLicense.checkPremium();
+         if (!premium && window.nosendLicense.getUsageCount() >= 10) {
+           showError('Free limit reached. Please upgrade to Premium.');
+           return;
+         }
+         // … actual processing …
+         window.nosendLicense.incrementUsage();
+
+       MEMORY / SAFETY RULES:
+         • PapaParse: always use { worker: true } for CSVs > 5 MB.
+         • pdf-lib:   process files SEQUENTIALLY — never Promise.all.
+                      Call URL.revokeObjectURL() after every object URL.
+         • Canvas:    call URL.revokeObjectURL() on every img.src.
+         • Always check file.size BEFORE parsing huge files.
+         • If processing is cancellable (long async loops), guard the
+           `finally` block against resetAll() having already run — check
+           a per-run token: `if (runToken !== currentRunToken) return;`.
+       ============================================================ -->
+  <script>
+  (function () {
+    'use strict';
+
+    document.addEventListener('DOMContentLoaded', function () {
+
+      /* ---------------------------------------------------------------
+         1. DOM REFERENCES
+         --------------------------------------------------------------- */
+      var dropzone     = document.getElementById('dropzone');
+      var fileInput    = document.getElementById('file-input');
+      var fileListEl   = document.getElementById('file-list');
+      var optionsPanel = document.getElementById('options');
+      var actionsPanel = document.getElementById('tool-actions');
+      var actionBtn    = document.getElementById('action-btn');
+      var actionLabel  = actionBtn.querySelector('[data-label]');
+      var actionSpin   = actionBtn.querySelector('.spinner');
+      var resetBtn     = document.getElementById('reset-btn');
+      var progressBox  = document.getElementById('progress-region');
+      var progressBar  = document.getElementById('progress-bar');
+      var progressText = document.getElementById('progress-text');
+      var errorAlert   = document.getElementById('error-alert');
+      var errorMsg     = document.getElementById('error-message');
+      var successAlert = document.getElementById('success-alert');
+      var successMsg   = document.getElementById('success-message');
+      var resultBox    = document.getElementById('result');
+      var toolSection  = document.getElementById('tool');
+
+      /* ---------------------------------------------------------------
+         2. STATE
+         --------------------------------------------------------------- */
+      var state = {
+        files: [],
+        processing: false
+      };
+
+      /* ---------------------------------------------------------------
+         3. HELPERS — small, reusable UI primitives
+         --------------------------------------------------------------- */
+      function formatBytes(bytes) {
+        if (!bytes || bytes < 1) return '0 B';
+        var k = 1024;
+        var sizes = ['B', 'KB', 'MB', 'GB'];
+        var i = Math.min(Math.floor(Math.log(bytes) / Math.log(k)), sizes.length - 1);
+        return (bytes / Math.pow(k, i)).toFixed(i === 0 ? 0 : 1) + ' ' + sizes[i];
+      }
+
+      function showError(message) {
+        successAlert.hidden = true;
+        errorMsg.textContent = message;
+        errorAlert.hidden = false;
+      }
+
+      function showSuccess(message) {
+        errorAlert.hidden = true;
+        successMsg.textContent = message;
+        successAlert.hidden = false;
+      }
+
+      function clearAlerts() {
+        errorAlert.hidden = true;
+        successAlert.hidden = true;
+      }
+
+      function setBusy(busy, label) {
+        state.processing = busy;
+        toolSection.setAttribute('aria-busy', busy ? 'true' : 'false');
+        actionBtn.disabled = busy || state.files.length === 0;
+        actionSpin.hidden = !busy;
+        if (label) actionLabel.textContent = label;
+        if (busy) {
+          progressBox.hidden = false;
+        }
+      }
+
+      function updateProgress(percent, message) {
+        progressBox.hidden = false;
+        if (typeof percent === 'number') {
+          progressBar.classList.remove('is-indeterminate');
+          progressBar.style.width = Math.max(0, Math.min(100, percent)) + '%';
+        } else {
+          progressBar.classList.add('is-indeterminate');
+          progressBar.style.width = '';
+        }
+        if (typeof message === 'string') {
+          progressText.textContent = message;
+        }
+      }
+
+      function hideProgress() {
+        progressBox.hidden = true;
+        progressBar.classList.remove('is-indeterminate');
+        progressBar.style.width = '0';
+        progressText.textContent = '';
+      }
+
+      /**
+       * Throw if `file` is larger than `maxBytes`. Tools call this inside
+       * their `processFiles()` implementation. Safe to call with
+       * `maxBytes = undefined` (no-op).
+       *
+       * @param   {File}   file
+       * @param   {number} [maxBytes]
+       * @throws  {Error}  when the file is too large
+       */
+      function assertMaxSize(file, maxBytes) {
+        if (typeof maxBytes !== 'number' || !isFinite(maxBytes) || maxBytes <= 0) {
+          return;
+        }
+        if (file.size > maxBytes) {
+          throw new Error(
+            file.name + ' is ' + formatBytes(file.size) +
+            ' — exceeds the ' + formatBytes(maxBytes) + ' limit.'
+          );
+        }
+      }
+
+      /* ---------------------------------------------------------------
+         4. FILE LIST RENDERING
+         --------------------------------------------------------------- */
+      function renderFileList() {
+        fileListEl.innerHTML = '';
+
+        if (state.files.length === 0) {
+          fileListEl.hidden = true;
+          optionsPanel.hidden = true;
+          actionsPanel.hidden = true;
+          resultBox.hidden = true;
+          clearAlerts();
+          hideProgress();
+          actionBtn.disabled = true;
+          return;
+        }
+
+        state.files.forEach(function (file) {
+          var li = document.createElement('li');
+          li.className = 'file-item';
+
+          var iconWrap = document.createElement('span');
+          iconWrap.className = 'file-item-icon';
+          iconWrap.innerHTML =
+            '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18"' +
+            ' viewBox="0 0 24 24" fill="none" stroke="currentColor"' +
+            ' stroke-width="2" stroke-linecap="round" stroke-linejoin="round"' +
+            ' aria-hidden="true" focusable="false">' +
+            '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>' +
+            '<polyline points="14 2 14 8 20 8"></polyline></svg>';
+
+          var info = document.createElement('div');
+          info.className = 'file-item-info';
+
+          var name = document.createElement('span');
+          name.className = 'file-item-name';
+          name.textContent = file.name;
+          name.title = file.name;
+
+          var size = document.createElement('span');
+          size.className = 'file-item-size';
+          size.textContent = formatBytes(file.size);
+
+          info.appendChild(name);
+          info.appendChild(size);
+
+          var removeBtn = document.createElement('button');
+          removeBtn.type = 'button';
+          removeBtn.className = 'file-item-remove';
+          removeBtn.setAttribute('aria-label', 'Remove ' + file.name);
+          removeBtn.innerHTML =
+            '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"' +
+            ' viewBox="0 0 24 24" fill="none" stroke="currentColor"' +
+            ' stroke-width="2" stroke-linecap="round" stroke-linejoin="round"' +
+            ' aria-hidden="true" focusable="false">' +
+            '<line x1="18" y1="6" x2="6" y2="18"></line>' +
+            '<line x1="6" y1="6" x2="18" y2="18"></line></svg>';
+
+          // Look up by file reference, not by closure index — prevents the
+          // classic "stale index after reorder / rapid clicks" bug.
+          removeBtn.addEventListener('click', function () {
+            var currentIndex = state.files.indexOf(file);
+            if (currentIndex === -1) return;
+            state.files.splice(currentIndex, 1);
+            renderFileList();
+          });
+
+          li.appendChild(iconWrap);
+          li.appendChild(info);
+          li.appendChild(removeBtn);
+          fileListEl.appendChild(li);
+        });
+
+        fileListEl.hidden = false;
+        optionsPanel.hidden = false;
+        actionsPanel.hidden = false;
+        actionBtn.disabled = state.processing;
+      }
+
+      function addFiles(fileListLike) {
+        var incoming = Array.prototype.slice.call(fileListLike);
+        if (incoming.length === 0) return;
+        clearAlerts();
+        state.files = state.files.concat(incoming);
+        renderFileList();
+      }
+
+      function resetAll() {
+        state.files = [];
+        state.processing = false;
+        fileInput.value = '';
+        resultBox.innerHTML = '';
+        resultBox.hidden = true;
+        hideProgress();
+        clearAlerts();
+        renderFileList();
+      }
+
+      /* ---------------------------------------------------------------
+         5. DROPZONE — click, drag, keyboard
+         --------------------------------------------------------------- */
+
+      // Click → open the file picker.
+      // The `e.target === fileInput` guard prevents a synthetic click from
+      // `fileInput.click()` re-bubbling up to `dropzone` and calling
+      // `fileInput.click()` a second time (some browsers reject the
+      // second call; others fire the picker twice).
+      dropzone.addEventListener('click', function (e) {
+        if (e.target === fileInput) return;
+        fileInput.click();
+      });
+
+      dropzone.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          fileInput.click();
+        }
+      });
+
+      dropzone.addEventListener('dragover', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        dropzone.classList.add('dragover');
+      });
+
+      dropzone.addEventListener('dragleave', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        dropzone.classList.remove('dragover');
+      });
+
+      dropzone.addEventListener('drop', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        dropzone.classList.remove('dragover');
+        if (e.dataTransfer && e.dataTransfer.files) {
+          addFiles(e.dataTransfer.files);
+        }
+      });
+
+      fileInput.addEventListener('change', function (e) {
+        addFiles(e.target.files);
+        // Reset the input so selecting the SAME file again re-fires `change`.
+        // Without this, removing a file from the list and then re-selecting
+        // it silently does nothing — the #1 reported bug on file-based tools.
+        fileInput.value = '';
+      });
+
+      /* ---------------------------------------------------------------
+         6. ACTIONS
+         --------------------------------------------------------------- */
+      resetBtn.addEventListener('click', resetAll);
+
+      actionBtn.addEventListener('click', async function () {
+        // --------------------------------------------------------------
+        // TODO — implement the actual tool.
+        //
+        // Skeleton (copy/paste, then fill in the three placeholders):
+        //
+        //   clearAlerts();
+        //   resultBox.hidden = true;
+        //   setBusy(true, 'Processing…');
+        //   updateProgress(null, 'Working…');
+        //
+        //   try {
+        //     var options = collectOptions();               // ← TODO
+        //     var output  = await processFiles(state.files, options);  // ← TODO
+        //     renderResult(output);                         // ← TODO
+        //     showSuccess('Done.');
+        //   } catch (err) {
+        //     showError(err && err.message ? err.message : 'Something went wrong.');
+        //   } finally {
+        //     setBusy(false, 'Process');
+        //     hideProgress();
+        //   }
+        //
+        // Expected signatures:
+        //
+        //   function collectOptions() {
+        //     return {
+        //       headers: document.getElementById('opt-headers')?.checked ?? true,
+        //       // … per-tool fields …
+        //     };
+        //   }
+        //
+        //   async function processFiles(files, options) {
+        //     // Validate sizes (PDF Merger example):
+        //     //   var maxSize = Number(fileInput.dataset.maxSize) || 0;
+        //     //   files.forEach(function (f) { assertMaxSize(f, maxSize); });
+        //     //
+        //     // … PapaParse / pdf-lib / Canvas logic …
+        //     return blob; // Blob passed to renderResult()
+        //   }
+        //
+        //   function renderResult(blob) {
+        //     resultBox.innerHTML = '';
+        //     // Build a Download button or a <pre> preview here.
+        //     resultBox.hidden = false;
+        //   }
+        // --------------------------------------------------------------
+      });
+
+      /* ---------------------------------------------------------------
+         7. INITIALISATION
+         --------------------------------------------------------------- */
+      renderFileList();
+    });
+
+  })();
+  </script>
+
+</body>
+</html>
