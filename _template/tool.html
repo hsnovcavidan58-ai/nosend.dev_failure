@@ -3,7 +3,7 @@
 <head>
   <!--
     ============================================================================
-    nosend.dev — MASTER TOOL TEMPLATE  (v2 · 2026-10-21)
+    nosend.dev — MASTER TOOL TEMPLATE  (v3 · 2026-10-22)
     ============================================================================
 
     USAGE
@@ -29,11 +29,41 @@
     {{TOOL_RESULT}}       Tool-specific result UI        — see #result comment
     {{RELATED_TOOLS}}     Grid of related tool cards     — see #related comment
 
+    ⚠️  PATH CONVENTION — CRITICAL
+    ------------------------------
+    This file lives at:  public/tools/<slug>/index.html   (2 levels deep)
+    Project root is:     public/
+    So — for LOCAL FILE references, always use ../../:
+
+      ✓ <link rel="stylesheet" href="../../assets/css/style.css">
+      ✓ <link rel="icon" href="../../favicon.svg">
+      ✓ <script src="../../assets/js/common.js" defer></script>
+      ✓ <script src="../../assets/js/license.js" defer></script>
+
+    ✗ <link rel="stylesheet" href="/assets/css/style.css">   ← WRONG (breaks local dev)
+    ✗ <link rel="stylesheet" href="assets/css/style.css">    ← WRONG (resolves to
+                                                                 public/tools/<slug>/assets/...)
+
+    BUT — page navigation links stay ABSOLUTE (root-relative) because they
+    need to jump to the domain root, not to a sibling directory:
+
+      ✓ <a href="/">Home</a>
+      ✓ <a href="/#tools">Tools</a>
+      ✓ <a href="/tools/csv-merger/">CSV Merger</a>
+      ✓ <a href="/privacy.html">Privacy</a>
+
+    AND — SEO / OG / JSON-LD URLs stay FULLY QUALIFIED (https://nosend.dev/…)
+    because crawlers do not resolve relative paths:
+
+      ✓ <link rel="canonical" href="https://nosend.dev/tools/<slug>/">
+      ✓ <meta property="og:image" content="https://nosend.dev/assets/img/og-image.png">
+      ✓ "url": "https://nosend.dev/tools/<slug>/"
+
     HARD RULES
     ----------
     • <header> and <footer> MUST stay empty — common.js injects them.
-    • Do NOT change <script src="/assets/js/common.js" defer> — required.
-    • Do NOT change <script src="/assets/js/license.js" defer>  — required.
+    • Do NOT change <script src="../../assets/js/common.js" defer> — required.
+    • Do NOT change <script src="../../assets/js/license.js" defer>  — required.
     • Never put secrets in this file. This is fully public HTML.
     • All processing MUST be client-side. No fetch() that uploads.
     • The file <input id="file-input"> MUST be configured per tool:
@@ -71,6 +101,8 @@
 
   <!-- ============================================================
        OPEN GRAPH (Facebook / LinkedIn / Telegram / WhatsApp)
+       NOTE: og:url and og:image MUST be absolute — crawlers do not
+       resolve relative paths.
        ============================================================ -->
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="nosend.dev">
@@ -92,10 +124,12 @@
 
   <!-- ============================================================
        BROWSER META
+       NOTE: internal asset links use RELATIVE paths (../../)
+       because this file lives at public/tools/<slug>/index.html
        ============================================================ -->
   <meta name="theme-color" content="#2563eb">
   <meta name="format-detection" content="telephone=no">
-  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="icon" type="image/svg+xml" href="../../favicon.svg">
 
   <!-- ============================================================
        RESOURCE HINTS
@@ -104,11 +138,13 @@
 
   <!-- ============================================================
        DESIGN SYSTEM (shared across all pages — do not remove)
+       Relative path: ../../assets/css/style.css
        ============================================================ -->
-  <link rel="stylesheet" href="/assets/css/style.css">
+  <link rel="stylesheet" href="../../assets/css/style.css">
 
   <!-- ============================================================
        JSON-LD — WebApplication schema (Google rich results)
+       URLs MUST be absolute — crawlers do not resolve relative paths.
        ============================================================ -->
   <script type="application/ld+json">
   {
@@ -181,7 +217,10 @@
        ============================================================ -->
   <main id="main" class="container" tabindex="-1">
 
-    <!-- ---------- BREADCRUMB ---------- -->
+    <!-- ---------- BREADCRUMB ----------
+         Navigation links stay ABSOLUTE (root-relative) so they jump
+         to the domain root, not to a sibling tools/ folder.
+         ---------------------------------------------------------- -->
     <nav class="breadcrumb" aria-label="Breadcrumb">
       <ol>
         <li><a href="/">Home</a></li>
@@ -422,7 +461,10 @@
       </p>
     </section>
 
-    <!-- ---------- RELATED TOOLS (shared across all tools) ---------- -->
+    <!-- ---------- RELATED TOOLS (shared across all tools) ----------
+         Navigation links stay ABSOLUTE — they need to jump to the
+         domain-root tools/ directory, not to a sibling one.
+         ---------------------------------------------------------- -->
     <section id="related" class="related-section" aria-labelledby="related-heading">
       <h2 id="related-heading">Other privacy-first tools</h2>
       <div class="grid">
@@ -461,9 +503,10 @@
 
   <!-- ============================================================
        SHARED SCRIPTS — order matters, defer preserves it.
+       Relative paths: ../../assets/js/...
        ============================================================ -->
-  <script src="/assets/js/common.js" defer></script>
-  <script src="/assets/js/license.js" defer></script>
+  <script src="../../assets/js/common.js" defer></script>
+  <script src="../../assets/js/license.js" defer></script>
 
   <!-- ============================================================
        TOOL-SPECIFIC LIBRARIES (CDN)
@@ -499,7 +542,7 @@
        AVAILABLE GLOBALS (after DOMContentLoaded fires):
          window.nosendLicense.checkPremium()    → Promise<{premium, reason}>
          window.nosendLicense.getUsageCount()   → number (current month)
-         window.nosendLicense.incrementUsage()  → void
+         window.nosendLicense.incrementUsage()  → number (new total)
 
        Example usage in a tool:
          const { premium } = await window.nosendLicense.checkPremium();
