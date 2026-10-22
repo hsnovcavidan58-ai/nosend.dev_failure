@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- ============================================================
+       SEO — PRIMARY
+       ============================================================ -->
+  <title>nosend.dev — Privacy-First Developer Tools, 100% in Your Browser</title>
+  <meta
+    name="description"
+    content="Merge CSV, convert images, edit PDF — all in your browser. Your files never leave your device. No upload, no server, no tracking."
+  >
+  <link rel="canonical" href="https://nosend.dev/">
+  <meta name="robots" content="index, follow, max-image-preview:large">
+
+  <!-- ============================================================
+       OPEN GRAPH (Facebook / LinkedIn / Telegram / WhatsApp)
+       NOTE: og:url and og:image MUST be absolute URLs — social
+       media crawlers do not resolve relative paths.
+       ============================================================ -->
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="nosend.dev">
+  <meta property="og:title" content="nosend.dev — Privacy-First Developer Tools">
+  <meta property="og:description" content="Merge CSV, convert images, edit PDF — all in your browser. Your files never leave your device.">
+  <meta property="og:url" content="https://nosend.dev/">
+  <meta property="og:image" content="https://nosend.dev/assets/img/og-image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="nosend.dev — privacy-first developer tools">
+
+  <!-- ============================================================
+       TWITTER / X CARD
+       ============================================================ -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="nosend.dev — Privacy-First Developer Tools">
+  <meta name="twitter:description" content="Merge CSV, convert images, edit PDF — all in your browser. Your files never leave your device.">
+  <meta name="twitter:image" content="https://nosend.dev/assets/img/og-image.png">
+
+  <!-- ============================================================
+       BROWSER META
+       NOTE: internal asset links below use RELATIVE paths
+             (no leading slash), per project convention.
+       ============================================================ -->
+  <meta name="theme-color" content="#2563eb">
+  <meta name="format-detection" content="telephone=no">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+
+  <!-- ============================================================
+       RESOURCE HINTS
+       ============================================================ -->
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+
+  <!-- ============================================================
+       DESIGN SYSTEM (shared across all pages — do not remove)
+       ============================================================ -->
+  <link rel="stylesheet" href="assets/css/style.css">
+
+  <!-- ============================================================
+       JSON-LD — WebSite schema
+       ============================================================ -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "nosend.dev",
+    "alternateName": "nosend",
+    "url": "https://nosend.dev",
+    "description": "Privacy-first developer tools that run 100% in your browser. No upload, no server, no tracking.",
+    "inLanguage": "en",
+    "publisher": {
+      "@type": "Organization",
+      "name": "nosend.dev",
+      "url": "https://nosend.dev",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://nosend.dev/favicon.svg"
+      }
+    }
+  }
+  </script>
+
+  <!-- ============================================================
+       JSON-LD — Organization schema
+       ============================================================ -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "nosend.dev",
+    "url": "https://nosend.dev",
+    "logo": "https://nosend.dev/favicon.svg",
+    "description": "Browser-based file processing tools with zero upload, zero server, zero tracking.",
+    "email": "hello@nosend.dev"
+  }
+  </script>
+
+  <!-- ============================================================
+       JSON-LD — ItemList (tools catalog)
+       ============================================================ -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    "name": "nosend.dev tools",
+    "description": "Privacy-first developer tools that run entirely in your browser.",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "url": "https://nosend.dev/tools/csv-merger/",
+        "name": "CSV Merger"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "url": "https://nosend.dev/tools/csv-to-json/",
+        "name": "CSV to JSON"
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "url": "https://nosend.dev/tools/json-formatter/",
+        "name": "JSON Formatter"
+      },
+      {
+        "@type": "ListItem",
+        "position": 4,
+        "url": "https://nosend.dev/tools/image-compressor/",
+        "name": "Image Compressor"
+      },
+      {
+        "@type": "ListItem",
+        "position": 5,
+        "url": "https://nosend.dev/tools/pdf-merger/",
+        "name": "PDF Merger"
+      },
+      {
+        "@type": "ListItem",
+        "position": 6,
+        "url": "https://nosend.dev/tools/image-converter/",
+        "name": "Image Converter"
+      }
+    ]
+  }
+  </script>
+</head>
+
+<body>
+
+  <!-- Skip link for keyboard / screen-reader users -->
+  <a href="#main" class="skip-link">Skip to main content</a>
+
+  <!-- ============================================================
+       NOSCRIPT — header/footer are injected by common.js,
+       so without JS they stay empty. Warn users clearly.
+       ============================================================ -->
+  <noscript>
+    <div class="container">
+      <div class="alert alert-warning" role="alert">
+        <p>
+          <strong>JavaScript is required.</strong>
+          nosend.dev runs entirely in your browser — enable JavaScript to use the tools.
+          Nothing is ever uploaded to a server.
+        </p>
+      </div>
+    </div>
+  </noscript>
+
+  <!-- ============================================================
+       HEADER — MUST stay empty.
+       common.js injects logo + nav + mobile toggle.
+       ============================================================ -->
+  <header></header>
+
+  <!-- ============================================================
+       MAIN CONTENT
+       ============================================================ -->
+  <main id="main" class="container" tabindex="-1">
+
+    <!-- ============================================================
+         HERO
+         ============================================================ -->
+    <section class="hero" aria-labelledby="hero-title">
+      <h1 id="hero-title">Your files never leave your browser.</h1>
+      <p class="lead">
+        Privacy-first tools for developers, lawyers, and accountants.
+        No upload. No server. No tracking.
+      </p>
+      <p>
+        <span class="badge badge-accent">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14"
+               viewBox="0 0 24 24" fill="none" stroke="currentColor"
+               stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+               aria-hidden="true" focusable="false">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+            <polyline points="9 12 11 14 15 10"></polyline>
+          </svg>
+          Browser-based · Zero upload
+        </span>
+      </p>
+      <div class="hero-actions">
+        <a href="#tools" class="btn btn-lg">
+          Explore tools
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18"
+               viewBox="0 0 24 24" fill="none" stroke="currentColor"
+               stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+               aria-hidden="true" focusable="false">
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+            <polyline points="12 5 19 12 12 19"></polyline>
+          </svg>
+        </a>
+        <a href="#privacy" class="btn btn-secondary btn-lg">Why privacy matters</a>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         TOOLS CATALOG  (#tools — referenced by common.js nav highlight)
+         ============================================================ -->
+    <section id="tools" aria-labelledby="tools-heading">
+      <div class="stack">
+        <div>
+          <h2 id="tools-heading">All tools</h2>
+          <p class="lead text-muted">
+            Every tool runs entirely client-side. No file ever touches a server.
+          </p>
+        </div>
+
+        <div class="grid">
+
+          <!-- ① CSV MERGER -->
+          <a href="tools/csv-merger/" class="card">
+            <span class="card-icon" aria-hidden="true">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                   viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                   stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                   focusable="false">
+                <line x1="8" y1="6" x2="21" y2="6"></line>
+                <line x1="8" y1="12" x2="21" y2="12"></line>
+                <line x1="8" y1="18" x2="21" y2="18"></line>
+                <line x1="3" y1="6" x2="3.01" y2="6"></line>
+                <line x1="3" y1="12" x2="3.01" y2="12"></line>
+                <line x1="3" y1="18" x2="3.01" y2="18"></line>
+              </svg>
+            </span>
+            <h3>CSV Merger</h3>
+            <p>Combine multiple CSV files into one — without uploading them anywhere.</p>
+          </a>
+
+          <!-- ② CSV → JSON -->
+          <a href="tools/csv-to-json/" class="card">
+            <span class="card-icon" aria-hidden="true">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                   viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                   stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                   focusable="false">
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+                <polyline points="12 5 19 12 12 19"></polyline>
+              </svg>
+            </span>
+            <h3>CSV → JSON</h3>
+            <p>Convert CSV files to JSON with header detection and pretty printing.</p>
+          </a>
+
+          <!-- ③ JSON FORMATTER -->
+          <a href="tools/json-formatter/" class="card">
+            <span class="card-icon" aria-hidden="true">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                   viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                   stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                   focusable="false">
+                <polyline points="16 18 22 12 16 6"></polyline>
+                <polyline points="8 6 2 12 8 18"></polyline>
+              </svg>
+            </span>
+            <h3>JSON Formatter</h3>
+            <p>Format, validate, and minify JSON — entirely in your browser.</p>
+          </a>
+
+          <!-- ④ IMAGE COMPRESSOR -->
+          <a href="tools/image-compressor/" class="card">
+            <span class="card-icon" aria-hidden="true">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                   viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                   stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                   focusable="false">
+                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                <polyline points="21 15 16 10 5 21"></polyline>
+              </svg>
+            </span>
+            <h3>Image Compressor</h3>
+            <p>Compress JPEG, PNG, and WebP images locally with a quality slider.</p>
+          </a>
+
+          <!-- ⑤ PDF MERGER -->
+          <a href="tools/pdf-merger/" class="card">
+            <span class="card-icon" aria-hidden="true">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                   viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                   stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                   focusable="false">
+                <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+                <polyline points="2 17 12 22 22 17"></polyline>
+                <polyline points="2 12 12 17 22 12"></polyline>
+              </svg>
+            </span>
+            <h3>PDF Merger</h3>
+            <p>Combine multiple PDFs locally — 50 MB per file, no uploads.</p>
+          </a>
+
+          <!-- ⑥ IMAGE CONVERTER -->
+          <a href="tools/image-converter/" class="card">
+            <span class="card-icon" aria-hidden="true">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                   viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                   stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                   focusable="false">
+                <polyline points="17 1 21 5 17 9"></polyline>
+                <path d="M3 11V9a4 4 0 0 1 4-4h14"></path>
+                <polyline points="7 23 3 19 7 15"></polyline>
+                <path d="M21 13v2a4 4 0 0 1-4 4H3"></path>
+              </svg>
+            </span>
+            <h3>Image Converter</h3>
+            <p>Convert between PNG, JPG, and WebP — no uploads, no quality loss.</p>
+          </a>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         HOW IT WORKS
+         ============================================================ -->
+    <section id="how" aria-labelledby="how-heading">
+      <div class="stack">
+        <div>
+          <h2 id="how-heading">How it works</h2>
+          <p class="lead text-muted">
+            Three steps. No account. No upload. No data leaves your device.
+          </p>
+        </div>
+
+        <div class="grid">
+
+          <div class="card card-flat">
+            <span class="card-icon" aria-hidden="true">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                   viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                   stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                   focusable="false">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+              </svg>
+            </span>
+            <h3>1. Pick a tool</h3>
+            <p>Choose from CSV, JSON, image, or PDF tools — all free, all browser-based.</p>
+          </div>
+
+          <div class="card card-flat">
+            <span class="card-icon" aria-hidden="true">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                   viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                   stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                   focusable="false">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="17 8 12 3 7 8"></polyline>
+                <line x1="12" y1="3" x2="12" y2="15"></line>
+              </svg>
+            </span>
+            <h3>2. Drop your file</h3>
+            <p>The file is read directly from your device — never transmitted to a server.</p>
+          </div>
+
+          <div class="card card-flat">
+            <span class="card-icon" aria-hidden="true">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                   viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                   stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                   focusable="false">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="7 10 12 15 17 10"></polyline>
+                <line x1="12" y1="15" x2="12" y2="3"></line>
+              </svg>
+            </span>
+            <h3>3. Download the result</h3>
+            <p>Your processed file is created in your browser and saved directly to your device.</p>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         PRIVACY  (#privacy — referenced by common.js nav highlight)
+         ============================================================ -->
+    <section id="privacy" aria-labelledby="privacy-heading">
+      <div class="stack">
+        <div>
+          <h2 id="privacy-heading">Why privacy matters</h2>
+          <p class="lead">
+            When you upload a document to a traditional tool, it's processed on
+            someone else's server. For legal contracts, financial spreadsheets,
+            or medical records, that's an unacceptable risk.
+          </p>
+        </div>
+
+        <table class="table" aria-label="Privacy comparison">
+          <thead>
+            <tr>
+              <th scope="col">Traditional tools</th>
+              <th scope="col">nosend.dev</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="text-error">&#10007; File leaves your device</td>
+              <td class="text-success">&#10003; File stays on your device</td>
+            </tr>
+            <tr>
+              <td class="text-error">&#10007; Stored on third-party servers</td>
+              <td class="text-success">&#10003; Zero server involvement</td>
+            </tr>
+            <tr>
+              <td class="text-error">&#10007; Potential compliance violations</td>
+              <td class="text-success">&#10003; No data collection</td>
+            </tr>
+            <tr>
+              <td class="text-error">&#10007; Trust required, proof absent</td>
+              <td class="text-success">&#10003; Verifiable in DevTools</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="alert alert-info" role="note">
+          <svg class="alert-icon" xmlns="http://www.w3.org/2000/svg"
+               width="20" height="20" viewBox="0 0 24 24" fill="none"
+               stroke="currentColor" stroke-width="2"
+               stroke-linecap="round" stroke-linejoin="round"
+               aria-hidden="true" focusable="false">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="16" x2="12" y2="12"></line>
+            <line x1="12" y1="8" x2="12.01" y2="8"></line>
+          </svg>
+          <p>
+            <strong>Verify it yourself:</strong> open DevTools (<kbd>F12</kbd>),
+            switch to the <strong>Network</strong> tab, and process a file.
+            You will see zero upload requests.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         AUDIENCE
+         ============================================================ -->
+    <section id="audience" aria-labelledby="audience-heading">
+      <div class="stack">
+        <div>
+          <h2 id="audience-heading">Built for sensitive work</h2>
+          <p class="lead text-muted">
+            The people who benefit most from browser-only tools.
+          </p>
+        </div>
+
+        <div class="grid">
+
+          <div class="card card-flat">
+            <span class="card-icon" aria-hidden="true">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                   viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                   stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                   focusable="false">
+                <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+                <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+              </svg>
+            </span>
+            <h3>Lawyers</h3>
+            <p>
+              Merge contracts and briefs without uploading client documents
+              to third-party servers. Reduce compliance exposure.
+            </p>
+          </div>
+
+          <div class="card card-flat">
+            <span class="card-icon" aria-hidden="true">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                   viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                   stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                   focusable="false">
+                <line x1="12" y1="1" x2="12" y2="23"></line>
+                <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+              </svg>
+            </span>
+            <h3>Accountants</h3>
+            <p>
+              Combine financial spreadsheets locally. Client data never leaves
+              your device, no matter how many files you process.
+            </p>
+          </div>
+
+          <div class="card card-flat">
+            <span class="card-icon" aria-hidden="true">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                   viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                   stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                   focusable="false">
+                <polyline points="16 18 22 12 16 6"></polyline>
+                <polyline points="8 6 2 12 8 18"></polyline>
+              </svg>
+            </span>
+            <h3>Developers</h3>
+            <p>
+              Format, validate, and convert data without the friction of uploads.
+              Fast, private, and free.
+            </p>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         FINAL CTA
+         ============================================================ -->
+    <section id="cta" class="text-center" aria-labelledby="cta-heading">
+      <div class="stack">
+        <h2 id="cta-heading">Ready to keep your files private?</h2>
+        <p class="lead">
+          Pick a tool and verify for yourself — open DevTools, process a file,
+          and watch the Network tab stay empty.
+        </p>
+        <div class="hero-actions">
+          <a href="#tools" class="btn btn-lg">Browse all tools</a>
+          <a href="pricing.html" class="btn btn-secondary btn-lg">Pricing</a>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ============================================================
+       FOOTER — MUST stay empty.
+       common.js injects copyright + legal links + dynamic year.
+       ============================================================ -->
+  <footer></footer>
+
+  <!-- ============================================================
+       SHARED SCRIPTS
+       common.js injects header, footer, active-link highlight, mobile menu.
+       ============================================================ -->
+  <script src="assets/js/common.js" defer></script>
+
+</body>
+</html>

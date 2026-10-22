@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- ============================================================
+       SEO — PRIMARY
+       ============================================================ -->
+  <title>404 — Page Not Found | nosend.dev</title>
+  <meta
+    name="description"
+    content="The page you're looking for doesn't exist on nosend.dev. Browse our privacy-first developer tools instead — no upload, no server, no tracking."
+  >
+  <link rel="canonical" href="https://nosend.dev/404.html">
+  <meta name="robots" content="noindex, follow">
+  <meta name="color-scheme" content="light dark">
+
+  <!-- ============================================================
+       OPEN GRAPH (Facebook / LinkedIn / Telegram / WhatsApp)
+       NOTE: og:url and og:image MUST be absolute URLs — social
+       media crawlers do not resolve relative paths.
+       ============================================================ -->
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="nosend.dev">
+  <meta property="og:title" content="404 — Page Not Found | nosend.dev">
+  <meta property="og:description" content="The page you're looking for doesn't exist. Browse our privacy-first developer tools instead.">
+  <meta property="og:url" content="https://nosend.dev/404.html">
+  <meta property="og:image" content="https://nosend.dev/assets/img/og-image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="nosend.dev — privacy-first developer tools">
+
+  <!-- ============================================================
+       TWITTER / X CARD
+       ============================================================ -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="404 — Page Not Found | nosend.dev">
+  <meta name="twitter:description" content="The page you're looking for doesn't exist. Browse our privacy-first developer tools instead.">
+  <meta name="twitter:image" content="https://nosend.dev/assets/img/og-image.png">
+
+  <!-- ============================================================
+       BROWSER META
+       NOTE: internal asset links below use RELATIVE paths
+             (no leading slash), per project convention.
+       ============================================================ -->
+  <meta name="theme-color" content="#2563eb">
+  <meta name="format-detection" content="telephone=no">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+
+  <!-- ============================================================
+       RESOURCE HINTS
+       ============================================================ -->
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+
+  <!-- ============================================================
+       DESIGN SYSTEM (shared across all pages — do not remove)
+       ============================================================ -->
+  <link rel="stylesheet" href="assets/css/style.css">
+
+  <!-- ============================================================
+       JSON-LD — WebPage schema
+       The 404 page is deliberately `noindex` above, but the
+       WebPage schema still helps any parser that reads the page.
+       ============================================================ -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "name": "404 — Page Not Found",
+    "url": "https://nosend.dev/404.html",
+    "description": "The page you're looking for doesn't exist on nosend.dev.",
+    "inLanguage": "en",
+    "isPartOf": {
+      "@type": "WebSite",
+      "name": "nosend.dev",
+      "url": "https://nosend.dev"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "nosend.dev",
+      "url": "https://nosend.dev",
+      "email": "hello@nosend.dev"
+    }
+  }
+  </script>
+
+  <!-- ============================================================
+       PAGE-SPECIFIC STYLES (404-only components)
+       These extend — and do not replace — the design system.
+       ============================================================ -->
+  <style>
+    /* ---------- Error hero ---------- */
+    .error-page {
+      text-align: center;
+      padding-block: var(--space-8) var(--space-12);
+    }
+
+    .error-code {
+      margin: 0;
+      font-size: clamp(6rem, 20vw, 12rem);
+      font-weight: var(--weight-bold);
+      line-height: 1;
+      letter-spacing: -0.06em;
+      color: var(--accent); /* visible fallback for older engines */
+      user-select: none;
+    }
+
+    @supports ((-webkit-background-clip: text) or (background-clip: text)) {
+      .error-code {
+        background: linear-gradient(
+          135deg,
+          var(--accent) 0%,
+          var(--accent-active, #1e40af) 100%
+        );
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        color: transparent;
+      }
+    }
+
+    .error-page h1 {
+      margin-top: var(--space-4);
+      font-size: clamp(var(--text-2xl), 4vw, var(--text-4xl));
+    }
+
+    .error-page .lead {
+      max-width: 60ch;
+      margin-inline: auto;
+      margin-top: var(--space-4);
+    }
+
+    /* ---------- Suggestions block ---------- */
+    .error-suggestions h2 {
+      margin-bottom: var(--space-2);
+    }
+
+    .error-suggestions .lead {
+      margin-bottom: var(--space-6);
+    }
+
+    /* ---------- Trust note ---------- */
+    .error-note {
+      margin-top: var(--space-12);
+    }
+
+    /* ---------- Responsive tuning ---------- */
+    @media (max-width: 480px) {
+      .error-page {
+        padding-block: var(--space-4) var(--space-8);
+      }
+
+      .error-actions .btn {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Skip link for keyboard / screen-reader users -->
+  <a href="#main" class="skip-link">Skip to main content</a>
+
+  <!-- ============================================================
+       NOSCRIPT — header/footer are injected by common.js,
+       so without JS they stay empty. Warn users clearly.
+       ============================================================ -->
+  <noscript>
+    <div class="container">
+      <div class="alert alert-warning" role="alert">
+        <p>
+          <strong>JavaScript is required.</strong>
+          nosend.dev runs entirely in your browser — enable JavaScript to use the tools.
+          Nothing is ever uploaded to a server.
+        </p>
+      </div>
+    </div>
+  </noscript>
+
+  <!-- ============================================================
+       HEADER — MUST stay empty.
+       common.js injects logo + nav + mobile toggle.
+       ============================================================ -->
+  <header></header>
+
+  <!-- ============================================================
+       MAIN CONTENT
+       ============================================================ -->
+  <main id="main" class="container" tabindex="-1">
+
+    <!-- ---------- BREADCRUMB ---------- -->
+    <nav class="breadcrumb" aria-label="Breadcrumb">
+      <ol>
+        <li><a href="index.html">Home</a></li>
+        <li><span aria-current="page">404</span></li>
+      </ol>
+    </nav>
+
+    <!-- ---------- ERROR HERO ---------- -->
+    <section class="error-page" aria-labelledby="error-title">
+      <p class="error-code" aria-hidden="true">404</p>
+      <h1 id="error-title">Page not found</h1>
+      <p class="lead">
+        The page you're looking for doesn't exist — or it may have moved.
+        Don't worry: no file was uploaded and no data was lost.
+      </p>
+
+      <div class="hero-actions">
+        <a href="index.html" class="btn btn-lg">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18"
+               viewBox="0 0 24 24" fill="none" stroke="currentColor"
+               stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+               aria-hidden="true" focusable="false">
+            <line x1="19" y1="12" x2="5" y2="12"></line>
+            <polyline points="12 19 5 12 12 5"></polyline>
+          </svg>
+          Back to home
+        </a>
+        <a href="index.html#tools" class="btn btn-secondary btn-lg">
+          Browse all tools
+        </a>
+      </div>
+    </section>
+
+    <!-- ---------- SUGGESTIONS ---------- -->
+    <section id="suggestions" class="error-suggestions" aria-labelledby="suggestions-heading">
+      <div class="stack">
+        <div class="text-center">
+          <h2 id="suggestions-heading">Try one of these tools instead</h2>
+          <p class="lead text-muted">
+            Every tool runs 100% in your browser. No upload, no server, no tracking.
+          </p>
+        </div>
+
+        <div class="grid">
+
+          <!-- ① CSV MERGER -->
+          <a href="tools/csv-merger/" class="card">
+            <span class="card-icon" aria-hidden="true">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                   viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                   stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                   focusable="false">
+                <line x1="8" y1="6" x2="21" y2="6"></line>
+                <line x1="8" y1="12" x2="21" y2="12"></line>
+                <line x1="8" y1="18" x2="21" y2="18"></line>
+                <line x1="3" y1="6" x2="3.01" y2="6"></line>
+                <line x1="3" y1="12" x2="3.01" y2="12"></line>
+                <line x1="3" y1="18" x2="3.01" y2="18"></line>
+              </svg>
+            </span>
+            <h3>CSV Merger</h3>
+            <p>Combine multiple CSV files into one — without uploading them anywhere.</p>
+          </a>
+
+          <!-- ② CSV → JSON -->
+          <a href="tools/csv-to-json/" class="card">
+            <span class="card-icon" aria-hidden="true">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                   viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                   stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                   focusable="false">
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+                <polyline points="12 5 19 12 12 19"></polyline>
+              </svg>
+            </span>
+            <h3>CSV → JSON</h3>
+            <p>Convert CSV files to JSON with header detection and pretty printing.</p>
+          </a>
+
+          <!-- ③ JSON FORMATTER -->
+          <a href="tools/json-formatter/" class="card">
+            <span class="card-icon" aria-hidden="true">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                   viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                   stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                   focusable="false">
+                <polyline points="16 18 22 12 16 6"></polyline>
+                <polyline points="8 6 2 12 8 18"></polyline>
+              </svg>
+            </span>
+            <h3>JSON Formatter</h3>
+            <p>Format, validate, and minify JSON — entirely in your browser.</p>
+          </a>
+
+          <!-- ④ IMAGE COMPRESSOR -->
+          <a href="tools/image-compressor/" class="card">
+            <span class="card-icon" aria-hidden="true">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                   viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                   stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                   focusable="false">
+                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                <polyline points="21 15 16 10 5 21"></polyline>
+              </svg>
+            </span>
+            <h3>Image Compressor</h3>
+            <p>Compress JPEG, PNG, and WebP images locally with a quality slider.</p>
+          </a>
+
+          <!-- ⑤ PDF MERGER -->
+          <a href="tools/pdf-merger/" class="card">
+            <span class="card-icon" aria-hidden="true">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                   viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                   stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                   focusable="false">
+                <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+                <polyline points="2 17 12 22 22 17"></polyline>
+                <polyline points="2 12 12 17 22 12"></polyline>
+              </svg>
+            </span>
+            <h3>PDF Merger</h3>
+            <p>Combine multiple PDFs locally — 50 MB per file, no uploads.</p>
+          </a>
+
+          <!-- ⑥ IMAGE CONVERTER -->
+          <a href="tools/image-converter/" class="card">
+            <span class="card-icon" aria-hidden="true">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                   viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                   stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                   focusable="false">
+                <polyline points="17 1 21 5 17 9"></polyline>
+                <path d="M3 11V9a4 4 0 0 1 4-4h14"></path>
+                <polyline points="7 23 3 19 7 15"></polyline>
+                <path d="M21 13v2a4 4 0 0 1-4 4H3"></path>
+              </svg>
+            </span>
+            <h3>Image Converter</h3>
+            <p>Convert between PNG, JPG, and WebP — no uploads, no quality loss.</p>
+          </a>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ---------- WHY THIS HAPPENED ---------- -->
+    <div class="alert alert-info error-note" role="note">
+      <svg class="alert-icon" xmlns="http://www.w3.org/2000/svg"
+           width="20" height="20" viewBox="0 0 24 24" fill="none"
+           stroke="currentColor" stroke-width="2"
+           stroke-linecap="round" stroke-linejoin="round"
+           aria-hidden="true" focusable="false">
+        <circle cx="12" cy="12" r="10"></circle>
+        <line x1="12" y1="16" x2="12" y2="12"></line>
+        <line x1="12" y1="8" x2="12.01" y2="8"></line>
+      </svg>
+      <p>
+        <strong>Why am I seeing this?</strong>
+        The URL may be mistyped, or the page may have moved. Every tool on
+        nosend.dev runs 100% in your browser — no file was uploaded, and
+        nothing was tracked on this 404 page. If you believe this is a bug,
+        let us know at <a href="mailto:hello@nosend.dev">hello@nosend.dev</a>.
+      </p>
+    </div>
+
+  </main>
+
+  <!-- ============================================================
+       FOOTER — MUST stay empty.
+       common.js injects copyright + legal links + dynamic year.
+       ============================================================ -->
+  <footer></footer>
+
+  <!-- ============================================================
+       SHARED SCRIPT
+       common.js injects header, footer, active-link highlight, mobile menu.
+       ============================================================ -->
+  <script src="assets/js/common.js" defer></script>
+
+</body>
+</html>
