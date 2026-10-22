@@ -1,0 +1,905 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- ============================================================
+       SEO — PRIMARY
+       ============================================================ -->
+  <title>Pricing — Free, Premium & Lifetime | nosend.dev</title>
+  <meta
+    name="description"
+    content="Privacy-first developer tools with simple, honest pricing. Free tier available. Premium from $9/month. Lifetime license from $49. No upload, no server, no tracking — ever."
+  >
+  <link rel="canonical" href="https://nosend.dev/pricing.html">
+  <meta name="robots" content="index, follow, max-image-preview:large">
+
+  <!-- ============================================================
+       OPEN GRAPH (Facebook / LinkedIn / Telegram / WhatsApp)
+       ============================================================ -->
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="nosend.dev">
+  <meta property="og:title" content="Pricing — Free, Premium & Lifetime | nosend.dev">
+  <meta property="og:description" content="Simple, honest pricing for privacy-first developer tools. Free forever tier. Premium $9/month. Lifetime $49. Launching 18 January 2027.">
+  <meta property="og:url" content="https://nosend.dev/pricing.html">
+  <meta property="og:image" content="https://nosend.dev/assets/img/og-image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="nosend.dev — privacy-first developer tools">
+
+  <!-- ============================================================
+       TWITTER / X CARD
+       ============================================================ -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Pricing — nosend.dev">
+  <meta name="twitter:description" content="Free, Premium, Lifetime. Simple pricing for privacy-first tools that never upload your files.">
+  <meta name="twitter:image" content="https://nosend.dev/assets/img/og-image.png">
+
+  <!-- ============================================================
+       BROWSER META
+       Internal asset links use RELATIVE paths (no leading slash).
+       ============================================================ -->
+  <meta name="theme-color" content="#2563eb">
+  <meta name="format-detection" content="telephone=no">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+
+  <!-- ============================================================
+       RESOURCE HINTS
+       ============================================================ -->
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+
+  <!-- ============================================================
+       DESIGN SYSTEM (shared across all pages — do not remove)
+       ============================================================ -->
+  <link rel="stylesheet" href="assets/css/style.css">
+
+  <!-- ============================================================
+       JSON-LD — WebPage schema
+       ============================================================ -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "name": "Pricing",
+    "url": "https://nosend.dev/pricing.html",
+    "description": "Simple, honest pricing for nosend.dev — privacy-first developer tools with zero upload, zero server, zero tracking.",
+    "inLanguage": "en",
+    "datePublished": "2026-10-22",
+    "dateModified": "2026-10-22",
+    "isPartOf": {
+      "@type": "WebSite",
+      "name": "nosend.dev",
+      "url": "https://nosend.dev"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "nosend.dev",
+      "url": "https://nosend.dev",
+      "email": "hello@nosend.dev"
+    }
+  }
+  </script>
+
+  <!-- ============================================================
+       JSON-LD — BreadcrumbList schema
+       ============================================================ -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": "https://nosend.dev/"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Pricing",
+        "item": "https://nosend.dev/pricing.html"
+      }
+    ]
+  }
+  </script>
+
+  <!-- ============================================================
+       JSON-LD — FAQPage schema
+       ============================================================ -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "Are the tools really free?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes. The free tier is free forever — no credit card, no account, no email required. You get 10 operations per calendar month and 10 MB per file. Everything runs in your browser."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Do you upload my files?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Never. Every tool runs 100% in your browser. You can verify this yourself — open DevTools (F12), switch to the Network tab, and process a file. You will see zero upload requests."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What is the difference between Premium and Lifetime?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Premium is a recurring subscription ($9/month or $79/year) with all premium features. Lifetime is a one-time payment ($49–$99) that gives you all premium features forever, with no recurring charges."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "When can I purchase?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Paid plans become available on 18 January 2027. Until then, every tool is completely free — no limits, no accounts, no payment required."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What payment methods do you accept?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Payments are handled by Lemon Squeezy, our Merchant of Record. They accept all major credit and debit cards, PayPal, and local payment methods depending on your region."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Do you offer refunds?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes. All purchases come with a 14-day no-questions-asked refund policy. Contact hello@nosend.dev within 14 days of purchase for a full refund."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Can I cancel my Premium subscription?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes, anytime. There are no lock-in contracts. You will retain Premium access until the end of your current billing period, and will not be charged again."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Do you collect any personal data?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Only what is strictly necessary to deliver a paid license: your email address (for license delivery) and payment confirmation from Lemon Squeezy. We never see your card details, and we never collect your files."
+        }
+      }
+    ]
+  }
+  </script>
+
+  <!-- ============================================================
+       PAGE-SPECIFIC STYLES (pricing-only components)
+       These extend — and do not replace — the design system.
+       ============================================================ -->
+  <style>
+    .pricing-grid {
+      display: grid;
+      gap: var(--space-6);
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      margin-top: var(--space-8);
+      align-items: stretch;
+    }
+
+    .pricing-card {
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      padding: var(--space-8);
+      background: var(--surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      transition: var(--transition);
+      height: 100%;
+    }
+
+    .pricing-card:hover {
+      border-color: var(--accent);
+      box-shadow: var(--shadow-md);
+    }
+
+    .pricing-featured {
+      border-color: var(--accent);
+      border-width: 2px;
+      box-shadow: var(--shadow-md);
+    }
+
+    .pricing-featured:hover {
+      box-shadow: var(--shadow-lg);
+    }
+
+    .pricing-badge {
+      position: absolute;
+      top: var(--space-4);
+      right: var(--space-4);
+    }
+
+    .pricing-name {
+      font-size: var(--text-xl);
+      font-weight: var(--weight-bold);
+      color: var(--text-heading);
+      margin: 0 0 var(--space-2);
+    }
+
+    .pricing-description {
+      font-size: var(--text-sm);
+      color: var(--text-muted);
+      margin: 0 0 var(--space-6);
+      line-height: var(--leading-relaxed);
+      min-height: 2.75rem;
+    }
+
+    .pricing-price {
+      font-size: var(--text-4xl);
+      font-weight: var(--weight-bold);
+      color: var(--text-heading);
+      margin: 0 0 var(--space-1);
+      line-height: 1;
+      letter-spacing: -0.02em;
+    }
+
+    .pricing-price .pricing-period {
+      font-size: var(--text-base);
+      font-weight: var(--weight-normal);
+      color: var(--text-muted);
+      letter-spacing: normal;
+    }
+
+    .pricing-meta {
+      font-size: var(--text-sm);
+      color: var(--text-muted);
+      margin: 0 0 var(--space-6);
+    }
+
+    .pricing-features {
+      list-style: none;
+      padding: 0;
+      margin: 0 0 var(--space-8);
+      flex: 1;
+    }
+
+    .pricing-features li {
+      display: flex;
+      align-items: flex-start;
+      gap: var(--space-2);
+      padding: var(--space-2) 0;
+      font-size: var(--text-sm);
+      color: var(--text);
+      line-height: var(--leading-snug);
+    }
+
+    .pricing-features li svg {
+      flex-shrink: 0;
+      width: 18px;
+      height: 18px;
+      margin-top: 2px;
+      color: var(--success);
+    }
+
+    .pricing-features li.is-disabled {
+      color: var(--text-subtle);
+    }
+
+    .pricing-features li.is-disabled svg {
+      color: var(--text-subtle);
+    }
+
+    .pricing-cta {
+      margin-top: auto;
+    }
+
+    .pricing-cta .btn {
+      display: flex;
+      width: 100%;
+    }
+
+    .faq-list {
+      margin-top: var(--space-6);
+    }
+
+    .faq-item {
+      padding: var(--space-5) 0;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .faq-item:first-child {
+      padding-top: 0;
+    }
+
+    .faq-item:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+
+    .faq-question {
+      font-size: var(--text-lg);
+      font-weight: var(--weight-semibold);
+      color: var(--text-heading);
+      margin: 0 0 var(--space-2);
+      line-height: var(--leading-snug);
+    }
+
+    .faq-answer {
+      margin: 0;
+      color: var(--text-muted);
+      line-height: var(--leading-relaxed);
+    }
+
+    .comparison-table-wrap {
+      margin-top: var(--space-6);
+      overflow-x: auto;
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+    }
+
+    .comparison-table-wrap .table {
+      border: none;
+      border-radius: 0;
+      min-width: 540px;
+    }
+
+    .comparison-table-wrap .table th,
+    .comparison-table-wrap .table td {
+      text-align: center;
+      padding: var(--space-3) var(--space-4);
+    }
+
+    .comparison-table-wrap .table th:first-child,
+    .comparison-table-wrap .table td:first-child {
+      text-align: left;
+    }
+
+    .comparison-table-wrap .table td.is-yes {
+      color: var(--success);
+      font-weight: var(--weight-semibold);
+    }
+
+    .comparison-table-wrap .table td.is-no {
+      color: var(--text-subtle);
+    }
+
+    @media (max-width: 640px) {
+      .pricing-card {
+        padding: var(--space-6);
+      }
+
+      .pricing-price {
+        font-size: var(--text-3xl);
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Skip link for keyboard / screen-reader users -->
+  <a href="#main" class="skip-link">Skip to main content</a>
+
+  <!-- ============================================================
+       NOSCRIPT — header/footer are injected by common.js,
+       so without JS they stay empty. Warn users clearly.
+       ============================================================ -->
+  <noscript>
+    <div class="container">
+      <div class="alert alert-warning" role="alert">
+        <p>
+          <strong>JavaScript is required.</strong>
+          nosend.dev runs entirely in your browser — enable JavaScript to use the tools.
+          Nothing is ever uploaded to a server.
+        </p>
+      </div>
+    </div>
+  </noscript>
+
+  <!-- ============================================================
+       HEADER — MUST stay empty.
+       common.js injects logo + nav + mobile toggle.
+       ============================================================ -->
+  <header></header>
+
+  <!-- ============================================================
+       MAIN CONTENT
+       ============================================================ -->
+  <main id="main" class="container" tabindex="-1">
+
+    <!-- ---------- BREADCRUMB ---------- -->
+    <nav class="breadcrumb" aria-label="Breadcrumb">
+      <ol>
+        <li><a href="index.html">Home</a></li>
+        <li><span aria-current="page">Pricing</span></li>
+      </ol>
+    </nav>
+
+    <!-- ---------- INTRO ---------- -->
+    <section id="intro" class="text-center" aria-labelledby="pricing-title">
+      <div class="stack">
+        <h1 id="pricing-title">Simple, honest pricing</h1>
+        <p class="lead">
+          Every tool runs 100% in your browser. No upload, no server, no tracking.
+          Choose the plan that fits you — or use the free tier forever.
+        </p>
+      </div>
+    </section>
+
+    <!-- ---------- LAUNCH NOTICE ---------- -->
+    <div class="alert alert-info" role="note">
+      <svg class="alert-icon" xmlns="http://www.w3.org/2000/svg"
+           width="20" height="20" viewBox="0 0 24 24" fill="none"
+           stroke="currentColor" stroke-width="2"
+           stroke-linecap="round" stroke-linejoin="round"
+           aria-hidden="true" focusable="false">
+        <circle cx="12" cy="12" r="10"></circle>
+        <line x1="12" y1="16" x2="12" y2="12"></line>
+        <line x1="12" y1="8" x2="12.01" y2="8"></line>
+      </svg>
+      <p>
+        <strong>Paid plans launch on 18 January 2027.</strong>
+        Until then, every tool is completely free — no limits, no accounts, no
+        payment required. Come back on launch day to activate Premium or Lifetime.
+      </p>
+    </div>
+
+    <!-- ---------- PRICING CARDS ---------- -->
+    <section id="plans" aria-labelledby="plans-heading">
+      <h2 id="plans-heading" class="visually-hidden">Available plans</h2>
+
+      <div class="pricing-grid">
+
+        <!-- ===== FREE ===== -->
+        <article class="pricing-card" aria-labelledby="plan-free">
+          <h2 id="plan-free" class="pricing-name">Free</h2>
+          <p class="pricing-description">
+            Everything you need to process files privately, with zero commitment.
+          </p>
+
+          <p class="pricing-price">
+            $0
+            <span class="pricing-period">/forever</span>
+          </p>
+          <p class="pricing-meta">No account. No email. No card.</p>
+
+          <ul class="pricing-features">
+            <li>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                   stroke="currentColor" stroke-width="2.5"
+                   stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+              All 6 tools
+            </li>
+            <li>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                   stroke="currentColor" stroke-width="2.5"
+                   stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+              Zero upload · zero tracking
+            </li>
+            <li>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                   stroke="currentColor" stroke-width="2.5"
+                   stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+              10 operations per month
+            </li>
+            <li>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                   stroke="currentColor" stroke-width="2.5"
+                   stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+              Up to 10 MB per file
+            </li>
+            <li class="is-disabled">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                   stroke="currentColor" stroke-width="2.5"
+                   stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+              </svg>
+              No batch processing
+            </li>
+            <li class="is-disabled">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                   stroke="currentColor" stroke-width="2.5"
+                   stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+              </svg>
+              Ad-supported
+            </li>
+          </ul>
+
+          <div class="pricing-cta">
+            <a href="index.html#tools" class="btn btn-secondary btn-lg">
+              Start using tools
+            </a>
+          </div>
+        </article>
+
+        <!-- ===== PREMIUM (FEATURED) ===== -->
+        <article class="pricing-card pricing-featured" aria-labelledby="plan-premium">
+          <span class="badge badge-accent pricing-badge">Most popular</span>
+          <h2 id="plan-premium" class="pricing-name">Premium</h2>
+          <p class="pricing-description">
+            Unlimited operations, larger files, and no ads — for power users
+            who process files every day.
+          </p>
+
+          <p class="pricing-price">
+            $9
+            <span class="pricing-period">/month</span>
+          </p>
+          <p class="pricing-meta">or $79/year · save 27%</p>
+
+          <ul class="pricing-features">
+            <li>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                   stroke="currentColor" stroke-width="2.5"
+                   stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+              Everything in Free, plus:
+            </li>
+            <li>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                   stroke="currentColor" stroke-width="2.5"
+                   stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+              Unlimited operations
+            </li>
+            <li>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                   stroke="currentColor" stroke-width="2.5"
+                   stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+              Up to 50 MB (PDF) / 500 MB (CSV)
+            </li>
+            <li>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                   stroke="currentColor" stroke-width="2.5"
+                   stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+              Batch processing
+            </li>
+            <li>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                   stroke="currentColor" stroke-width="2.5"
+                   stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+              Ad-free experience
+            </li>
+            <li>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                   stroke="currentColor" stroke-width="2.5"
+                   stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+              Early access to new tools
+            </li>
+          </ul>
+
+          <div class="pricing-cta">
+            <button type="button" class="btn btn-lg" disabled
+                    aria-label="Premium plan — available 18 January 2027">
+              Available 18 Jan 2027
+            </button>
+          </div>
+        </article>
+
+        <!-- ===== LIFETIME ===== -->
+        <article class="pricing-card" aria-labelledby="plan-lifetime">
+          <h2 id="plan-lifetime" class="pricing-name">Lifetime</h2>
+          <p class="pricing-description">
+            Pay once, use forever. Best value for long-term privacy-conscious
+            professionals.
+          </p>
+
+          <p class="pricing-price">
+            $49
+            <span class="pricing-period">once</span>
+          </p>
+          <p class="pricing-meta">Launch window: $49 · Regular: $99</p>
+
+          <ul class="pricing-features">
+            <li>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                   stroke="currentColor" stroke-width="2.5"
+                   stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+              Everything in Premium
+            </li>
+            <li>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                   stroke="currentColor" stroke-width="2.5"
+                   stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+              One-time payment
+            </li>
+            <li>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                   stroke="currentColor" stroke-width="2.5"
+                   stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+              No recurring charges
+            </li>
+            <li>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                   stroke="currentColor" stroke-width="2.5"
+                   stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+              All future tools included
+            </li>
+            <li>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                   stroke="currentColor" stroke-width="2.5"
+                   stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+              14-day money-back guarantee
+            </li>
+            <li>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                   stroke="currentColor" stroke-width="2.5"
+                   stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+              Priority email support
+            </li>
+          </ul>
+
+          <div class="pricing-cta">
+            <button type="button" class="btn btn-lg" disabled
+                    aria-label="Lifetime plan — available 18 January 2027">
+              Available 18 Jan 2027
+            </button>
+          </div>
+        </article>
+
+      </div>
+    </section>
+
+    <!-- ---------- FEATURE COMPARISON ---------- -->
+    <section id="compare" aria-labelledby="compare-heading">
+      <div class="stack">
+        <div>
+          <h2 id="compare-heading">Feature comparison</h2>
+          <p class="lead text-muted">
+            Every plan runs 100% in your browser. The only differences are limits
+            and premium features.
+          </p>
+        </div>
+
+        <div class="comparison-table-wrap">
+          <table class="table" aria-label="Plan feature comparison">
+            <thead>
+              <tr>
+                <th scope="col">Feature</th>
+                <th scope="col">Free</th>
+                <th scope="col">Premium</th>
+                <th scope="col">Lifetime</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>All 6 tools (CSV, JSON, image, PDF)</td>
+                <td class="is-yes">✓</td>
+                <td class="is-yes">✓</td>
+                <td class="is-yes">✓</td>
+              </tr>
+              <tr>
+                <td>Zero upload · zero tracking</td>
+                <td class="is-yes">✓</td>
+                <td class="is-yes">✓</td>
+                <td class="is-yes">✓</td>
+              </tr>
+              <tr>
+                <td>Monthly operations</td>
+                <td>10</td>
+                <td><strong>Unlimited</strong></td>
+                <td><strong>Unlimited</strong></td>
+              </tr>
+              <tr>
+                <td>Max file size — PDF</td>
+                <td>10 MB</td>
+                <td><strong>50 MB</strong></td>
+                <td><strong>50 MB</strong></td>
+              </tr>
+              <tr>
+                <td>Max file size — CSV</td>
+                <td>10 MB</td>
+                <td><strong>500 MB</strong></td>
+                <td><strong>500 MB</strong></td>
+              </tr>
+              <tr>
+                <td>Max file size — Image</td>
+                <td>10 MB</td>
+                <td><strong>100 MB</strong></td>
+                <td><strong>100 MB</strong></td>
+              </tr>
+              <tr>
+                <td>Batch processing</td>
+                <td class="is-no">—</td>
+                <td class="is-yes">✓</td>
+                <td class="is-yes">✓</td>
+              </tr>
+              <tr>
+                <td>Ad-free experience</td>
+                <td class="is-no">—</td>
+                <td class="is-yes">✓</td>
+                <td class="is-yes">✓</td>
+              </tr>
+              <tr>
+                <td>Early access to new tools</td>
+                <td class="is-no">—</td>
+                <td class="is-yes">✓</td>
+                <td class="is-yes">✓</td>
+              </tr>
+              <tr>
+                <td>Priority email support</td>
+                <td class="is-no">—</td>
+                <td class="is-yes">✓</td>
+                <td class="is-yes">✓</td>
+              </tr>
+              <tr>
+                <td>Recurring charges</td>
+                <td>None</td>
+                <td>Monthly or yearly</td>
+                <td><strong>Never</strong></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ---------- FAQ ---------- -->
+    <section id="faq" aria-labelledby="faq-heading">
+      <div class="stack">
+        <div>
+          <h2 id="faq-heading">Frequently asked questions</h2>
+          <p class="lead text-muted">
+            Everything you need to know before choosing a plan.
+          </p>
+        </div>
+
+        <div class="faq-list">
+
+          <div class="faq-item">
+            <h3 class="faq-question">Are the tools really free?</h3>
+            <p class="faq-answer">
+              Yes. The free tier is free forever — no credit card, no account,
+              no email required. You get 10 operations per calendar month and
+              10 MB per file. Everything runs in your browser.
+            </p>
+          </div>
+
+          <div class="faq-item">
+            <h3 class="faq-question">Do you upload my files?</h3>
+            <p class="faq-answer">
+              Never. Every tool runs 100% in your browser. You can verify this
+              yourself — open DevTools (<kbd>F12</kbd>), switch to the
+              <strong>Network</strong> tab, and process a file. You will see zero
+              upload requests.
+            </p>
+          </div>
+
+          <div class="faq-item">
+            <h3 class="faq-question">What is the difference between Premium and Lifetime?</h3>
+            <p class="faq-answer">
+              Premium is a recurring subscription ($9/month or $79/year) with all
+              premium features. Lifetime is a one-time payment ($49–$99) that gives
+              you all premium features forever, with no recurring charges.
+            </p>
+          </div>
+
+          <div class="faq-item">
+            <h3 class="faq-question">When can I purchase?</h3>
+            <p class="faq-answer">
+              Paid plans become available on <strong>18 January 2027</strong>.
+              Until then, every tool is completely free — no limits, no accounts,
+              no payment required.
+            </p>
+          </div>
+
+          <div class="faq-item">
+            <h3 class="faq-question">What payment methods do you accept?</h3>
+            <p class="faq-answer">
+              Payments are handled by Lemon Squeezy, our Merchant of Record.
+              They accept all major credit and debit cards, PayPal, and local
+              payment methods depending on your region.
+            </p>
+          </div>
+
+          <div class="faq-item">
+            <h3 class="faq-question">Do you offer refunds?</h3>
+            <p class="faq-answer">
+              Yes. All purchases come with a <strong>14-day no-questions-asked
+              refund policy</strong>. Contact
+              <a href="mailto:hello@nosend.dev">hello@nosend.dev</a> within 14 days
+              of purchase for a full refund.
+            </p>
+          </div>
+
+          <div class="faq-item">
+            <h3 class="faq-question">Can I cancel my Premium subscription?</h3>
+            <p class="faq-answer">
+              Yes, anytime. There are no lock-in contracts. You will retain Premium
+              access until the end of your current billing period, and will not be
+              charged again.
+            </p>
+          </div>
+
+          <div class="faq-item">
+            <h3 class="faq-question">Do you collect any personal data?</h3>
+            <p class="faq-answer">
+              Only what is strictly necessary to deliver a paid license: your email
+              address (for license delivery) and payment confirmation from Lemon
+              Squeezy. We never see your card details, and we never collect your
+              files. See our <a href="privacy.html">Privacy Policy</a> for full
+              details.
+            </p>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ---------- FINAL CTA ---------- -->
+    <section id="cta" class="text-center" aria-labelledby="cta-heading">
+      <div class="stack">
+        <h2 id="cta-heading">Start with the free tier today</h2>
+        <p class="lead">
+          Every tool works right now, no signup required. Upgrade when paid plans
+          launch on 18 January 2027 — or stay free forever.
+        </p>
+        <div class="hero-actions">
+          <a href="index.html#tools" class="btn btn-lg">Browse all tools</a>
+          <a href="mailto:hello@nosend.dev?subject=Notify%20me%20at%20launch"
+             class="btn btn-secondary btn-lg">
+            Get launch reminder
+          </a>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ============================================================
+       FOOTER — MUST stay empty.
+       common.js injects copyright + legal links + dynamic year.
+       ============================================================ -->
+  <footer></footer>
+
+  <!-- ============================================================
+       SHARED SCRIPTS
+       common.js injects header, footer, active-link highlight, mobile menu.
+       license.js (optional here) lets the page react to an existing license.
+       ============================================================ -->
+  <script src="assets/js/common.js" defer></script>
+  <script src="assets/js/license.js" defer></script>
+
+</body>
+</html>
