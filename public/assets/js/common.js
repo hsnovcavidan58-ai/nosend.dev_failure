@@ -18,9 +18,9 @@
  *   - Idempotent: running twice is a no-op
  *   - Respects per-page header/footer content (won't overwrite non-empty)
  *   - Degrades gracefully if any expected element is missing
- *   - Works from any directory depth (uses absolute paths)
+ *   - Works from any directory depth (uses root-relative paths)
  *
- * @generated 2026-10-21
+ * @generated 2026-10-22
  * ============================================================================
  */
 
@@ -56,11 +56,15 @@
      *
      * To add a new link: append { href, label, section }.
      * To remove a link: delete the entry.
+     *
+     * NOTE: `href` values must be root-relative (start with "/") because
+     * this script runs from an arbitrary page depth (e.g., /tools/x/).
+     * Relative hrefs would resolve against the current page URL and break.
      */
     nav: [
-      { href: '/#tools',   label: 'Tools',   section: 'tools'   },
-      { href: '/#privacy', label: 'Privacy', section: 'privacy' },
-      { href: '/pricing',  label: 'Pricing', section: 'pricing' }
+      { href: '/#tools',        label: 'Tools',   section: 'tools'   },
+      { href: '/#privacy',      label: 'Privacy', section: 'privacy' },
+      { href: '/pricing.html',  label: 'Pricing', section: 'pricing' }
     ],
 
     footer: {
@@ -161,17 +165,6 @@
    *
    * Returns one of: 'tools' | 'privacy' | 'legal' | 'pricing' | null
    *
-   * Rules:
-   *   /                     → 'tools'  (default homepage section)
-   *   /#privacy             → 'privacy'
-   *   /#pricing             → 'pricing'
-   *   /#tools               → 'tools'
-   *   /tools/...            → 'tools'
-   *   /privacy(.html)       → 'privacy'
-   *   /terms(.html)         → 'legal'
-   *   /pricing(.html)       → 'pricing'
-   *   anything else         → null (no nav link highlighted)
-   *
    * @returns {string|null}
    */
   function getCurrentSection() {
@@ -244,10 +237,6 @@
 
   /**
    * Inject the header markup into `<body > header>`.
-   * Skips if:
-   *   - the element is missing,
-   *   - already injected by us (marker present),
-   *   - already contains content (per-page override).
    */
   function injectHeader() {
     const header = document.querySelector('body > header');
@@ -296,7 +285,6 @@
 
   /**
    * Inject the footer markup into `<body > footer>`.
-   * Same defensive checks as `injectHeader()`.
    */
   function injectFooter() {
     const footer = document.querySelector('body > footer');
@@ -319,7 +307,6 @@
   /**
    * Add `.active` class + `aria-current` attribute to the nav link whose
    * `section` matches the current page's section.
-   * Idempotent: safe to call repeatedly (e.g., on hashchange).
    */
   function highlightActiveNav() {
     const nav = document.getElementById(CONFIG.ids.nav);
@@ -355,25 +342,18 @@
    *   - Click outside nav + toggle: close
    *   - Press Escape: close, return focus to toggle
    *   - Resize above breakpoint: close
-   *
-   * Icon state (hamburger ↔ X) is driven by `aria-expanded` + `hidden`.
    */
   function setupMobileMenu() {
     const nav    = document.getElementById(CONFIG.ids.nav);
     const toggle = document.getElementById(CONFIG.ids.menuToggle);
     if (!nav || !toggle) return;
 
-    // Guard against double-wiring if this function is ever called twice.
     if (toggle.dataset.nsWired === '1') return;
     toggle.dataset.nsWired = '1';
 
     const iconMenu  = toggle.querySelector('[data-icon="menu"]');
     const iconClose = toggle.querySelector('[data-icon="close"]');
 
-    /**
-     * Apply open/closed state to DOM + ARIA.
-     * @param {boolean} open
-     */
     function setOpen(open) {
       nav.classList.toggle('open', open);
 
@@ -387,27 +367,21 @@
       if (iconClose) iconClose.hidden = !open;
     }
 
-    /** @returns {boolean} */
     function isOpen() {
       return nav.classList.contains('open');
     }
 
-    // --- Toggle button ----------------------------------------------------
     toggle.addEventListener('click', function (event) {
-      // Stop propagation so the document-level "outside click" handler
-      // doesn't immediately close what we just opened.
       event.stopPropagation();
       setOpen(!isOpen());
     });
 
-    // --- Close when a nav link is clicked --------------------------------
     nav.addEventListener('click', function (event) {
       if (!isOpen()) return;
       const link = event.target.closest('a');
       if (link) setOpen(false);
     });
 
-    // --- Close when clicking outside -------------------------------------
     document.addEventListener('click', function (event) {
       if (!isOpen()) return;
       if (nav.contains(event.target)) return;
@@ -415,7 +389,6 @@
       setOpen(false);
     });
 
-    // --- Close on Escape -------------------------------------------------
     document.addEventListener('keydown', function (event) {
       if (event.key !== 'Escape') return;
       if (!isOpen()) return;
@@ -423,7 +396,6 @@
       toggle.focus();
     });
 
-    // --- Close when resizing above the mobile breakpoint -----------------
     const mq = window.matchMedia(CONFIG.breakpoint);
 
     function onBreakpointChange() {
@@ -433,11 +405,9 @@
     if (typeof mq.addEventListener === 'function') {
       mq.addEventListener('change', onBreakpointChange);
     } else if (typeof mq.addListener === 'function') {
-      // Fallback for very old Safari (< 14).
       mq.addListener(onBreakpointChange);
     }
 
-    // --- Initial state ---------------------------------------------------
     setOpen(false);
   }
 
@@ -447,8 +417,6 @@
 
   /**
    * Write the current year into every `#footer-year` element on the page.
-   * Handles both injected footers and per-page footers that already have
-   * the `<span id="footer-year">` placeholder in their markup.
    */
   function updateFooterYear() {
     const year = String(new Date().getFullYear());
@@ -464,8 +432,6 @@
 
   /**
    * Run all setup routines in the correct order.
-   * Header/footer must be injected first because `setupMobileMenu()` and
-   * `highlightActiveNav()` query for elements that only exist after injection.
    */
   function init() {
     injectHeader();
@@ -475,18 +441,12 @@
     updateFooterYear();
   }
 
-  // Run as soon as the DOM is ready. With `defer`, `readyState` is typically
-  // 'interactive' here, so `init()` runs immediately. If the script is loaded
-  // without `defer` and runs during parsing, we fall back to DOMContentLoaded.
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init, { once: true });
   } else {
     init();
   }
 
-  // Re-evaluate active link whenever the hash changes (e.g., clicking
-  // `/#privacy` from the homepage). Delegated via the persistent nav element
-  // would be overkill — the window-level event is cheap and fires rarely.
   window.addEventListener('hashchange', highlightActiveNav);
 
 })();
