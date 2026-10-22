@@ -1647,6 +1647,34 @@ footer a:hover {
    20. UTILITIES
    ========================================================================== */
 
+/* --- Anchor scroll offset (sticky header compensation) -------------------
+   Without this rule, clicking any in-page anchor (#tools, #privacy, #main,
+   /#tools from another page, etc.) scrolls the target element to y = 0,
+   where it is hidden behind the sticky header (64px tall on desktop,
+   56px on mobile).
+
+   Adding `scroll-margin-top` tells the browser to stop scrolling that many
+   pixels BEFORE the target top edge — so the element lands just below the
+   sticky header with comfortable breathing room.
+
+   Why `[id]` (all id-bearing elements) instead of a selective list:
+     • Any `id` is a potential anchor target by definition.
+     • Covers sections, mains, headings, articles, divs — everything.
+     • Zero maintenance: new anchored sections are covered automatically.
+     • No perf cost: `scroll-margin-top` is a no-op for non-targets.
+
+   Why `--header-height` + `--space-4` instead of a hardcoded 64px:
+     • `--header-height` is redefined to 56px inside the ≤768px media query,
+       so mobile gets the correct offset automatically.
+     • `--space-4` (16px) adds visual breathing room below the header so the
+       target heading doesn't touch the header border.
+     • Result: 80px on desktop, 72px on mobile. */
+[id] {
+  scroll-margin-top: calc(var(--header-height) + var(--space-4));
+}
+
+/* --- Visibility --- */
+
 .hidden {
   display: none !important;
 }
