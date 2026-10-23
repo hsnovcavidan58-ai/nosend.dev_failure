@@ -1,0 +1,314 @@
+# =============================================================================
+# nosend.dev — Cloudflare Pages HTTP Headers
+# =============================================================================
+#
+# File:     public/_headers
+# Deploy:   Cloudflare Pages reads this file automatically on every build
+# Docs:     https://developers.cloudflare.com/pages/configuration/headers/
+#
+# PURPOSE
+# -------
+# This file configures two categories of HTTP response headers:
+#   1. SECURITY headers — CSP, HSTS, X-Frame-Options, Permissions-Policy, etc.
+#   2. CACHE headers   — per-asset-type freshness policies
+#
+# Both are critical for:
+#   • B2B trust (law firms and accountants ask "is your site secure?")
+#   • Google's Page Experience / Core Web Vitals scoring
+#   • Defense against XSS, clickjacking, MIME-sniffing, referrer leaks
+#
+# -----------------------------------------------------------------------------
+# SYNTAX (Cloudflare Pages spec)
+# -----------------------------------------------------------------------------
+#   • Each block starts with a URL path pattern (MUST be root-relative, "/…").
+#   • Header lines are indented with two spaces.
+#   • Blank lines separate blocks.
+#   • If multiple patterns match a request, the LAST matching rule WINS
+#     for any duplicate header. Order in this file is therefore critical.
+#   • Wildcard "*" matches any characters — INCLUDING slashes.
+#     So "/*" matches "/", "/tools/x/", "/assets/css/style.css", etc.
+#
+# -----------------------------------------------------------------------------
+# FILE ORDER (do not reorder without reading this)
+# -----------------------------------------------------------------------------
+#   1. /*              ← base: security headers + default cache
+#   2. /*.html         ← HTML cache override (all .html files)
+#   3. /               ← homepage cache override (URL has no .html)
+#   4. /tools/*        ← tool pages cache override (trailing-slash URLs)
+#   5. /404.html       ← error page override (must come AFTER /*.html)
+#   6. /assets/css/*   ← CSS cache override
+#   7. /assets/js/*    ← JS cache override
+#   8. /assets/img/*   ← image cache override
+#   9. /favicon.svg    ← favicon cache override
+#  10. /robots.txt     ← SEO cache
+#  11. /sitemap.xml    ← SEO cache
+#
+# -----------------------------------------------------------------------------
+# CSP — WHY 'unsafe-inline' IS PRESENT (read before tightening)
+# -----------------------------------------------------------------------------
+# Tool pages (public/tools/*/index.html) and some other pages ship inline
+# <script> and <style> blocks (per _template/tool.html design). Without
+# 'unsafe-inline', these would not execute — every tool would silently break.
+#
+# The proper long-term fix is nonces or hashes, which requires either:
+#   (a) dynamic HTML generation (not possible on static Cloudflare Pages), or
+#   (b) build-time hashing of every inline block + CSP updates on each change.
+#
+# Neither is compatible with the current "static HTML, no build step" design.
+# 'unsafe-inline' is therefore an accepted, documented trade-off. All other
+# XSS mitigations remain active: object-src 'none', frame-ancestors 'none',
+# strict connect-src, and X-Content-Type-Options: nosniff.
+#
+# -----------------------------------------------------------------------------
+# HSTS — NO 'preload' DIRECTIVE
+# -----------------------------------------------------------------------------
+# max-age is set to one year with includeSubDomains. The "preload" directive
+# is intentionally OMITTED: submission to the HSTS preload list is permanent
+# (removal takes months across browser vendors). Add it later only after
+# deciding the domain will serve HTTPS-only for the foreseeable future.
+#
+# =============================================================================
+
+
+# =============================================================================
+# ALL ROUTES — security baseline + default cache
+# =============================================================================
+#
+# These headers apply to EVERY response unless overridden by a more specific
+# block below. They form the security foundation of the entire site.
+#
+/*
+  # ---- Clickjacking & MIME-sniffing defense ---------------------------------
+  X-Frame-Options: DENY
+  X-Content-Type-Options: nosniff
+
+  # ---- Legacy XSS filter (modern recommendation) ----------------------------
+  # Explicitly disable the deprecated browser XSS filter. The old filter could
+  # be abused to suppress legitimate inline scripts and is superseded by CSP.
+  X-XSS-Protection: 0
+
+  # ---- Referrer policy ------------------------------------------------------
+  # Send the full URL for same-origin requests, only the origin for cross-origin
+  # HTTPS→HTTPS, and nothing for HTTPS→HTTP. Balances SEO/analytics with privacy.
+  Referrer-Policy: strict-origin-when-cross-origin
+
+  # ---- Transport security ---------------------------------------------------
+  # Force HTTPS for one year across all subdomains (nosend.dev + api.nosend.dev).
+  # No "preload" (see file header for rationale).
+  Strict-Transport-Security: max-age=31536000; includeSubDomains
+
+  # ---- Cross-origin isolation -----------------------------------------------
+  # COOP: prevents cross-origin windows from retaining a handle to our page.
+  #       "same-origin-allow-popups" is used (not "same-origin") so future
+  #       payment flows (Lemon Squeezy checkout) can open popups if needed.
+  # CORP: prevents other origins from loading our assets via <img>, <script>,
+  #       <link>, etc. — anti-hotlinking, anti-tracking-surface.
+  # COEP: intentionally NOT set (would break CDN loading from jsDelivr).
+  Cross-Origin-Opener-Policy: same-origin-allow-popups
+  Cross-Origin-Resource-Policy: same-origin
+
+  # ---- Permissions Policy ---------------------------------------------------
+  # Explicitly disable every sensitive browser API. The tools do not need any
+  # of them; disabling them shrinks the attack surface and blocks fingerprinting.
+  # "fullscreen=()" is safe — no tool uses the Fullscreen API.
+  Permissions-Policy: accelerometer=(), ambient-light-sensor=(), autoplay=(), battery=(), camera=(), display-capture=(), encrypted-media=(), fullscreen=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), midi=(), payment=(), picture-in-picture=(), publickey-credentials-get=(), screen-wake-lock=(), usb=(), web-share=(), xr-spatial-tracking=()
+
+  # ---- Content Security Policy ----------------------------------------------
+  # Notes on each directive:
+  #   • default-src 'self'         → deny by default, allow only same-origin
+  #   • script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net
+  #                                → own scripts, inline tool logic, jsDelivr
+  #                                  (PapaParse, pdf-lib); see file header
+  #                                  for the 'unsafe-inline' rationale
+  #   • style-src 'self' 'unsafe-inline'
+  #                                → design system + per-page <style> blocks
+  #   • img-src 'self' data: blob: → canvas/OG images, canvas.toBlob() output
+  #   • font-src 'self'            → system-ui only; no external fonts
+  #   • connect-src 'self' https://api.nosend.dev
+  #                                → license validation (Cloudflare Worker);
+  #                                  no other outbound fetches allowed
+  #   • worker-src 'self' blob:    → PapaParse worker:true uses blob: Workers
+  #   • object-src 'none'          → block Flash/Java/PDF plugins
+  #   • frame-src 'none'           → no iframes allowed
+  #   • frame-ancestors 'none'     → cannot be embedded by any origin
+  #   • base-uri 'self'            → prevent <base> tag hijacking
+  #   • form-action 'self'         → forms can only POST to nosend.dev
+  #   • upgrade-insecure-requests  → auto-upgrade any stray http:// subresource
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self' https://api.nosend.dev; worker-src 'self' blob:; manifest-src 'self'; media-src 'self'; object-src 'none'; frame-src 'none'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests
+
+  # ---- Default cache (overridden per asset below) ---------------------------
+  # Safe default: short public cache with mandatory revalidation. Cloudflare
+  # Pages serves strong ETags, so revalidation is a cheap 304 round-trip.
+  Cache-Control: public, max-age=300, must-revalidate
+
+
+# =============================================================================
+# HTML — all .html files (index, privacy, terms, pricing, 404, tools/*/index)
+# =============================================================================
+#
+# HTML must stay fresh so users see tool updates, price changes, and legal
+# revisions promptly. "must-revalidate" means: never serve a stale copy from
+# cache — always check with the edge first. Cloudflare's edge cache (separate
+# from browser cache) handles the performance side.
+#
+/*.html
+  Cache-Control: public, max-age=300, must-revalidate
+
+
+# =============================================================================
+# HOMEPAGE — "/" (URL has no ".html" extension, needs explicit override)
+# =============================================================================
+#
+# The root "/" serves /index.html but the URL stays "/". The "/*.html" rule
+# above does NOT match it, so it needs its own block.
+#
+/
+  Cache-Control: public, max-age=300, must-revalidate
+
+
+# =============================================================================
+# TOOL PAGES — /tools/<slug>/ (trailing-slash URLs)
+# =============================================================================
+#
+# Tool pages are served as "/tools/csv-merger/" (directory-style URL), which
+# does NOT match "/*.html" because the URL has no ".html" suffix. This block
+# gives them the same short HTML cache as every other page.
+#
+# It also matches direct "/tools/csv-merger/index.html" requests — same policy,
+# correct outcome.
+#
+/tools/*
+  Cache-Control: public, max-age=300, must-revalidate
+
+
+# =============================================================================
+# 404 — never cache (must come AFTER /*.html to win the override race)
+# =============================================================================
+#
+# A cached 404 is a UX disaster: a user fixes their URL, but the browser keeps
+# showing the error page from cache. "no-store" ensures every visit re-fetches.
+#
+# X-Robots-Tag is defense-in-depth: even if some bot parses the body without
+# honoring <meta name="robots">, this HTTP header prevents indexing.
+#
+/404.html
+  Cache-Control: no-store
+  X-Robots-Tag: noindex, nofollow
+
+
+# =============================================================================
+# ASSETS — CSS
+# =============================================================================
+#
+# Filenames are NOT content-hashed (assets/css/style.css, not style.a1b2c3.css),
+# so long-lived "immutable" caching is unsafe: an update to style.css would
+# never reach users. One hour with revalidation is a safe, practical balance.
+# Cloudflare's edge cache serves most requests; only conditional revalidation
+# reaches the origin.
+#
+/assets/css/*
+  Cache-Control: public, max-age=3600, must-revalidate
+
+
+# =============================================================================
+# ASSETS — JavaScript
+# =============================================================================
+#
+# Same reasoning as CSS. Both common.js and license.js change during active
+# development; a one-hour TTL keeps updates propagating without hammering the
+# edge on every navigation.
+#
+/assets/js/*
+  Cache-Control: public, max-age=3600, must-revalidate
+
+
+# =============================================================================
+# ASSETS — images (og-image.png, future icons, screenshots)
+# =============================================================================
+#
+# Images change rarely, so a one-week cache is safe and materially improves
+# repeat-visit performance. Bump a query string (?v=2) on the referencing HTML
+# when an image is replaced and needs to reach users immediately.
+#
+/assets/img/*
+  Cache-Control: public, max-age=604800
+
+
+# =============================================================================
+# FAVICON — SVG
+# =============================================================================
+#
+# Favicons are cached aggressively by browsers regardless of headers, but a
+# one-week policy is still appropriate. SVG MIME type is set explicitly for
+# older or stricter user agents that would otherwise sniff.
+#
+/favicon.svg
+  Cache-Control: public, max-age=604800
+  Content-Type: image/svg+xml
+
+
+# =============================================================================
+# SEO FILES — robots.txt
+# =============================================================================
+#
+# Crawlers re-read robots.txt regularly. One day is fresh enough for policy
+# changes while avoiding needless origin hits from aggressive crawlers.
+#
+/robots.txt
+  Cache-Control: public, max-age=86400
+
+
+# =============================================================================
+# SEO FILES — sitemap.xml
+# =============================================================================
+#
+# Search engines refresh sitemaps on their own schedule; one hour at the edge
+# is more than sufficient. Cloudflare Pages invalidates its edge cache on
+# every deployment regardless of this header.
+#
+/sitemap.xml
+  Cache-Control: public, max-age=86400
+
+
+# =============================================================================
+# END OF FILE
+# =============================================================================
+#
+# HOW TO VERIFY DEPLOYMENT (after `wrangler pages deploy public`)
+# ----------------------------------------------------------------
+#   1. Security headers on any page:
+#        curl -sI https://nosend.dev/ | grep -iE 'strict-transport|x-frame|
+#          content-security|referrer|permissions|cross-origin'
+#
+#   2. Cache policy on HTML vs. assets:
+#        curl -sI https://nosend.dev/                  # → max-age=300
+#        curl -sI https://nosend.dev/privacy.html      # → max-age=300
+#        curl -sI https://nosend.dev/assets/css/style.css  # → max-age=3600
+#        curl -sI https://nosend.dev/assets/img/og-image.png  # → max-age=604800
+#
+#   3. 404 behavior:
+#        curl -sI https://nosend.dev/nonexistent       # → Cache-Control: no-store
+#
+#   4. CSP enforcement (browser):
+#        Open DevTools → Console. Expect ZERO CSP violation messages on any
+#        page while navigating normally. Any violation = a resource that the
+#        policy blocks and that must be added to the allowlist consciously.
+#
+# WHEN TO UPDATE THIS FILE
+# ------------------------
+#   • Adding a new CDN (e.g., unpkg.com) → extend script-src / style-src
+#   • Adding a new third-party API         → extend connect-src
+#   • Enabling WebAssembly in a tool       → add 'wasm-unsafe-eval' to script-src
+#   • Enabling Lemon Squeezy checkout JS   → extend script-src + connect-src
+#   • Enabling analytics (if ever)         → extend script-src + connect-src
+#   • Adding fonts under /assets/fonts/    → add a /assets/fonts/* block
+#
+# -----------------------------------------------------------------------------
+# Security headers in this file are deliberately strict. If a legitimate
+# feature stops working, do NOT simply remove the header — first understand
+# WHICH directive blocks it, and then widen ONLY that directive to the minimum
+# scope required. Document the change in the commit message.
+# -----------------------------------------------------------------------------
+#
+# Last updated: 2026-10-23
+# =============================================================================
