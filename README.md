@@ -351,7 +351,7 @@ See [`docs/launch-checklist.md`](docs/launch-checklist.md) for the atomic weekly
 - [x] **Day 1 — Foundation:** `.gitignore`, `README.md`, `style.css`, `common.js`
 - [X] **Day 2 — Template & shared resources:** `_template/tool.html`, `license.js`, `favicon.svg`, `launch-checklist.md`
 - [X] **Day 3 — Core pages:** `index.html`, `privacy.html`, `terms.html`, `404.html`
-- [ ] **Day 4 — SEO & Cloudflare config:** `robots.txt`, `_headers`, `_redirects`, `wrangler.toml`
+- [X] **Day 4 — SEO & Cloudflare config:** `robots.txt`, `_headers`, `_redirects`, `wrangler.toml`
 - [ ] **Day 5 — Backend & docs:** `worker/package.json`, `worker/src/index.js`, `b2b-emails.md`, `sitemap.xml`
 - [ ] **Day 6 — First tools:** `csv-merger`, `csv-to-json`, `json-formatter`, `image-compressor`
 - [ ] **Day 7+ — Remaining tools:** `pdf-merger`, `image-converter`
