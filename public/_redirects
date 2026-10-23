@@ -1,0 +1,425 @@
+# =============================================================================
+# nosend.dev — Cloudflare Pages Redirects
+# =============================================================================
+#
+# File:     public/_redirects
+# Deploy:   Cloudflare Pages reads this file automatically on every build
+# Docs:     https://developers.cloudflare.com/pages/configuration/redirects/
+#
+# PURPOSE
+# -------
+# This file handles three categories of redirect:
+#
+#   1. CANONICALIZATION — collapse duplicate URLs to a single canonical form.
+#      Example: /index.html → /  (same content, one URL for SEO).
+#
+#   2. CONVENIENCE — short, memorable aliases for commonly-typed URLs.
+#      Example: /privacy → /privacy.html  (no extension to remember).
+#
+#   3. FUTURE-PROOFING — 301 permanent redirects from old slugs to new slugs.
+#      Example: /tools/csv-merge → /tools/csv-merger/ (if slug is ever renamed).
+#
+# Every rule in this file uses 301 (permanent). This is deliberate:
+#   • 301 transfers ~99% of SEO link equity from old URL to new URL.
+#   • Browsers and CDNs cache 301s long-term — good for performance.
+#   • These URLs are permanent decisions, not A/B tests. Use 302 only for
+#     temporary experiments — never for a URL you plan to keep.
+#
+# WHAT THIS FILE DOES *NOT* DO (and why)
+# --------------------------------------
+#   • No SPA fallback. This is a STATIC site — every URL maps to a real
+#     file. A catch-all `/*  /index.html  200` rule would return HTTP 200
+#     for every non-existent page, hiding 404s from Google (major SEO bug)
+#     and confusing users. Every URL must resolve to a real file or 404.
+#
+#   • No /404.html redirect. Cloudflare Pages ALREADY serves public/404.html
+#     automatically with HTTP status 404 for unknown routes. Redirecting
+#     unknown paths to /404.html (via 301/302) would change the status code
+#     to 3xx, causing crawlers to index the error page as a valid URL —
+#     a textbook SEO anti-pattern. Leave Cloudflare's 404 handling alone.
+#
+#   • No www ↔ apex rule. Redirecting www.nosend.dev ↔ nosend.dev is
+#     handled at the Cloudflare DNS / Redirect Rules layer, BEFORE requests
+#     reach the Pages project. A `_redirects` rule here would be dead code
+#     (never evaluated for cross-origin www traffic).
+#
+#   • No trailing-slash 308 overrides. When a directory contains index.html,
+#     Cloudflare automatically sends a 308 from /tools/x → /tools/x/. Adding
+#     explicit rules for this would either conflict or create a redirect
+#     loop. Trust the platform; do not "fix" what is not broken.
+#
+#   • No asset redirects. /assets/* paths are served directly as files.
+#     Redirecting them would break Cache-Control headers (see _headers),
+#     Content-Security-Policy allowlists, and any future Subresource
+#     Integrity (SRI) hashes. Never add /assets/* rules here.
+#
+#   • No api.nosend.dev rules. api.nosend.dev is a Cloudflare Worker with
+#     its own routing. Requests to api.* never reach Pages, so any rule
+#     here would be unreachable dead code. The Worker is configured in
+#     worker/wrangler.toml.
+#
+#   • No external redirects. No rule in this file may redirect to a domain
+#     other than nosend.dev. External redirects are an open-redirect
+#     vulnerability — a phishing vector and a Google ranking penalty.
+#
+# -----------------------------------------------------------------------------
+# SYNTAX (Cloudflare Pages spec)
+# -----------------------------------------------------------------------------
+#   [source]     [destination]     [status-code]
+#
+#   • Source MUST start with "/" (root-relative path).
+#   • Destination MUST start with "/" (internal) or "https://nosend.dev/"
+#     (same-origin absolute). Never a different domain.
+#   • Status: 200 (rewrite), 301, 302, 303, 307, 308.
+#     200 = proxy (URL bar unchanged, content from elsewhere) — DO NOT USE.
+#     301 = permanent (SEO transfer, cached long-term) — DEFAULT HERE.
+#     302 = temporary (no SEO transfer) — only for A/B tests.
+#   • Placeholders:  /:slug    — matches exactly ONE path segment.
+#   • Splats:        /path/*   — matches EVERYTHING after /path/ (one max).
+#   • Comments start with "#" on their own line.
+#
+# -----------------------------------------------------------------------------
+# RULE PRECEDENCE — CRITICAL (opposite of _headers)
+# -----------------------------------------------------------------------------
+#   • In `_headers`: LAST matching rule wins (most specific goes at bottom).
+#   • In `_redirects`: FIRST matching rule wins (most specific goes at top).
+#
+#   This is because redirects represent URL transitions — once you've matched
+#   the right source pattern, further rules would create a chain. Order this
+#   file: specific patterns BEFORE general patterns.
+#
+#   Hard limit: 2,000 static + 100 dynamic rules per Cloudflare Pages project.
+#   We currently use ~20. Headroom is enormous.
+#
+# -----------------------------------------------------------------------------
+# PATH CONVENTION — INTENTIONAL EXCEPTION TO PROJECT RULE
+# -----------------------------------------------------------------------------
+# The project-wide rule says: "No leading slash in local file references."
+# (e.g., href="assets/css/style.css", not "/assets/css/style.css")
+#
+# This file is the ONE EXCEPTION. Every source and destination in `_redirects`
+# MUST start with "/". Why:
+#
+#   • HTML relative paths resolve against the CURRENT PAGE URL — they must
+#     work under file://, localhost, and any deployment subdirectory. So
+#     "assets/css/style.css" → "../../assets/css/style.css" depending on
+#     page depth.
+#
+#   • `_redirects` source patterns are matched against the incoming HTTP
+#     REQUEST PATH at Cloudflare's edge — there is no "current page".
+#     They must be absolute. A source of "privacy" (no slash) is a syntax
+#     error and the entire rule is silently ignored.
+#
+# Do NOT "fix" the leading slashes below. They are correct and required.
+#
+# Last updated: 2026-10-23
+# =============================================================================
+
+
+# =============================================================================
+# 1. HOMEPAGE CANONICALIZATION
+# =============================================================================
+# The homepage is served at "/" (Cloudflare resolves "/" → /index.html).
+# A direct request to /index.html returns the SAME content under a DIFFERENT
+# URL — classic duplicate content. Google indexes both, splits page rank,
+# and may pick the wrong one as canonical. This rule fixes that.
+#
+# /index (no .html) catches users who type the URL by hand.
+#
+/index.html    /    301
+/index         /    301
+
+
+# =============================================================================
+# 2. LEGAL PAGE ALIASES
+# =============================================================================
+# Actual files: privacy.html, terms.html. These aliases let users type
+# /privacy or /terms without the extension — cleaner for business cards,
+# printed materials, and verbal references ("nosend.dev/privacy").
+#
+# The real URLs still work: /privacy.html and /terms.html resolve directly
+# to their files with NO redirect (Cloudflare serves the file). Only the
+# extensionless form redirects. No redirect chain, no double-hop.
+#
+/privacy       /privacy.html    301
+/terms         /terms.html      301
+
+
+# =============================================================================
+# 3. PRICING PAGE ALIAS
+# =============================================================================
+# Same rationale as legal pages. /pricing is cleaner in ad copy, tweets,
+# and HN comments where every character counts.
+#
+/pricing       /pricing.html    301
+
+
+# =============================================================================
+# 4. TOOL INDEX.HTML CANONICALIZATION
+# =============================================================================
+# Each tool lives at public/tools/<slug>/index.html. Cloudflare serves it
+# when you request /tools/<slug>/ — but /tools/<slug>/index.html ALSO works,
+# creating a duplicate URL. This rule collapses both to the canonical form.
+#
+# :slug matches EXACTLY ONE path segment. Nested paths like
+# /tools/x/y/index.html (which would be a mistake) are NOT captured — they
+# 404 naturally, which is the correct behavior.
+#
+# The trailing slash in the destination is REQUIRED — Cloudflare's automatic
+# 308 for /tools/<slug> → /tools/<slug>/ means that if we redirected to
+# /tools/<slug> (no slash), the user would receive TWO redirects in series
+# (ours + Cloudflare's). One redirect is faster and cleaner.
+#
+/tools/:slug/index.html    /tools/:slug/    301
+
+
+# =============================================================================
+# 5. TOOL SHORT-LINK ALIASES
+# =============================================================================
+# Marketing-friendly short URLs. Useful for:
+#   • Social posts (Twitter's 280-char limit, LinkedIn captions)
+#   • Product Hunt / Hacker News launch text
+#   • QR codes and print materials
+#   • Verbal references ("try nosend.dev/pdf")
+#
+# Every destination uses the canonical trailing-slash form — see section 4
+# for the rationale. Avoids a redirect chain.
+#
+# NOTE: During pre-launch development, some tool directories may not exist
+# yet. The redirect rules still fire (they're evaluated before file lookup),
+# but they would land on a 404 until the tool ships. This is expected and
+# correct — the URL contract is defined NOW, the destination fills in later.
+#
+/csv                 /tools/csv-merger/          301
+/csv-merger          /tools/csv-merger/          301
+/csv-to-json         /tools/csv-to-json/         301
+
+/json                /tools/json-formatter/      301
+/json-formatter      /tools/json-formatter/      301
+
+/image-compress      /tools/image-compressor/    301
+/image-convert       /tools/image-converter/     301
+
+/pdf                 /tools/pdf-merger/          301
+/pdf-merger          /tools/pdf-merger/          301
+
+
+# =============================================================================
+# 6. TOOL SLUG FIXUPS (FUTURE-PROOFING)
+# =============================================================================
+# If a tool slug is ever renamed (e.g., csv-merge → csv-merger during beta),
+# add a 301 here so old inbound links and Google's index transfer cleanly.
+#
+# These are ANTICIPATED aliases — variants of the current slugs that were
+# considered during planning but did not become canonical. They are safe
+# to keep: the destination pages exist, so there is no risk of 404s for
+# legitimate traffic. They also pre-empt common typos.
+#
+# When you rename a tool in the future:
+#   1. Move public/tools/OLD/ → public/tools/NEW/
+#   2. Add a rule below: /tools/OLD/  /tools/NEW/  301
+#   3. Update sitemap.xml and internal links
+#   4. Keep this rule FOREVER (301s are permanent; removal causes 404s)
+#
+/tools/csv-merge          /tools/csv-merger/        301
+/tools/image-compress     /tools/image-compressor/  301
+/tools/json-format        /tools/json-formatter/    301
+/tools/image-convert      /tools/image-converter/   301
+
+
+# =============================================================================
+# DELIBERATELY OMITTED — DO NOT ADD THESE
+# =============================================================================
+#
+# The following rules look useful but are actively harmful. Each is listed
+# with the specific reason it must never appear in this file.
+#
+# ❌  /*                    /index.html    200
+#     SPA fallback. Would return HTTP 200 for every unknown URL, hiding all
+#     404s from Google. Devastating for SEO (soft-404 penalty). Every tool
+#     is a real HTML file — there is no router, no need for a fallback.
+#
+# ❌  /*                    /404.html      404
+#     `_redirects` does not support 404 status. Status codes allowed:
+#     200, 301, 302, 303, 307, 308. Attempting 404 here breaks the rule.
+#     Cloudflare already serves 404.html with proper 404 status automatically.
+#
+# ❌  /old-page             https://external.com/page    301
+#     Open redirect. Google penalizes it. Phishers abuse it. NO external
+#     destinations, ever. If you migrate to a different domain, do it at
+#     the Cloudflare DNS layer with a Bulk Redirect List — not in _redirects.
+#
+# ❌  /assets/*             /somewhere-else    301
+#     Would break Cache-Control (from _headers), Content-Security-Policy
+#     allowlists, and any future SRI hashes. Assets are static files — never
+#     redirect them.
+#
+# ❌  /tools/csv-merger     /tools/csv-merger/  301
+#     Redundant. Cloudflare Pages already sends an automatic 308 for this
+#     pattern (because the directory contains index.html). Adding our own
+#     301 would run BEFORE Cloudflare's automatic rule, creating a 301→308
+#     chain. Always trust Cloudflare's automatic handling.
+#
+# ❌  /                      /home             301
+#     Creates a redirect from the homepage. Google treats "/" as the site
+#     root. Redirecting "/" breaks that assumption, triggers a "redirect
+#     on homepage" warning in Search Console, and confuses users. Never
+#     redirect "/" anywhere.
+#
+# ❌  /privacy.html          /privacy          301
+#     Redirecting FROM the real file TO the alias is backwards. The real
+#     file is canonical; the alias is a convenience. Our rule goes
+#     /privacy → /privacy.html (correct direction), never the reverse.
+#
+# ❌  /ANYTHING              /ANYTHING         301
+#     Self-redirect. Causes an infinite redirect loop. Cloudflare rejects
+#     these at deploy time, but you may see build errors without a clear
+#     message. Always verify destination ≠ source (modulo query strings).
+
+
+# =============================================================================
+# HOW TO VERIFY DEPLOYMENT
+# =============================================================================
+#
+# After `wrangler pages deploy public` (or a GitHub-triggered build), run
+# these commands to verify each section of this file works as intended.
+#
+# Use `curl -sI` to fetch headers only (fast) and `curl -sIL` to follow
+# redirects and see the full chain (detects loops and chains).
+#
+# -----------------------------------------------------------------------------
+# 1. Homepage canonicalization
+# -----------------------------------------------------------------------------
+#   curl -sI https://nosend.dev/index.html | grep -iE '^(HTTP|location)'
+#   Expected:
+#     HTTP/2 301
+#     location: /
+#
+# -----------------------------------------------------------------------------
+# 2. Extensionless legal pages
+# -----------------------------------------------------------------------------
+#   curl -sI https://nosend.dev/privacy | grep -iE '^(HTTP|location)'
+#   Expected:
+#     HTTP/2 301
+#     location: /privacy.html
+#
+#   curl -sI https://nosend.dev/terms | grep -iE '^(HTTP|location)'
+#   Expected:
+#     HTTP/2 301
+#     location: /terms.html
+#
+# -----------------------------------------------------------------------------
+# 3. Pricing page
+# -----------------------------------------------------------------------------
+#   curl -sI https://nosend.dev/pricing | grep -iE '^(HTTP|location)'
+#   Expected:
+#     HTTP/2 301
+#     location: /pricing.html
+#
+# -----------------------------------------------------------------------------
+# 4. Tool index.html canonicalization
+# -----------------------------------------------------------------------------
+#   curl -sI https://nosend.dev/tools/csv-merger/index.html | grep -iE '^(HTTP|location)'
+#   Expected:
+#     HTTP/2 301
+#     location: /tools/csv-merger/
+#
+# -----------------------------------------------------------------------------
+# 5. Tool short links
+# -----------------------------------------------------------------------------
+#   curl -sI https://nosend.dev/pdf | grep -iE '^(HTTP|location)'
+#   Expected:
+#     HTTP/2 301
+#     location: /tools/pdf-merger/
+#
+#   curl -sI https://nosend.dev/csv | grep -iE '^(HTTP|location)'
+#   Expected:
+#     HTTP/2 301
+#     location: /tools/csv-merger/
+#
+# -----------------------------------------------------------------------------
+# 6. Slug fixups
+# -----------------------------------------------------------------------------
+#   curl -sI https://nosend.dev/tools/csv-merge | grep -iE '^(HTTP|location)'
+#   Expected:
+#     HTTP/2 301
+#     location: /tools/csv-merger/
+#
+# -----------------------------------------------------------------------------
+# 7. 404 behavior — MUST be HTTP 404, NOT a redirect
+# -----------------------------------------------------------------------------
+#   curl -sI https://nosend.dev/this-does-not-exist | head -n1
+#   Expected:
+#     HTTP/2 404
+#
+#   If you see 301/302 instead, a forbidden catch-all rule exists somewhere
+#   in this file. Remove it.
+#
+# -----------------------------------------------------------------------------
+# 8. Redirect chain detection (each redirect should resolve in ONE hop)
+# -----------------------------------------------------------------------------
+#   curl -sIL https://nosend.dev/tools/csv-merge | grep -E '^(HTTP|location)'
+#   Expected:
+#     HTTP/2 301          ← /tools/csv-merge  (from our rule)
+#     location: /tools/csv-merger/
+#     HTTP/2 200          ← final destination (served from file)
+#
+#   If you see THREE or more HTTP lines, there is a redirect chain.
+#   Common cause: destination missing trailing slash → Cloudflare's
+#   automatic 308 → 301 + 308 chain. Fix: add trailing slash to destination.
+#
+# -----------------------------------------------------------------------------
+# 9. Redirect loop detection
+# -----------------------------------------------------------------------------
+#   curl -sIL https://nosend.dev/ | grep -E '^(HTTP|location)'
+#   Expected:
+#     HTTP/2 200          ← single response, no redirect
+#
+#   Any `location:` line pointing back to "/" indicates a self-redirect
+#   somewhere in the file. Cloudflare usually rejects these at deploy time,
+#   but always verify after editing.
+#
+# -----------------------------------------------------------------------------
+# If any of these checks fail, diagnose in this order:
+#   1. Case sensitivity — paths are case-sensitive. /PRIVACY ≠ /privacy.
+#      (Our rules use lowercase — match the actual file names.)
+#   2. Rule order — first match wins. Verify with `curl -v` tracing.
+#   3. Deploy succeeded — Cloudflare Pages → Deployments → latest build.
+#   4. CDN cache — Cloudflare caches 301s for 24h. Purge after fixing rules:
+#      Cloudflare Dashboard → Caching → Purge Everything (or by URL).
+#   5. Browser cache — hard-refresh (Cmd+Shift+R / Ctrl+F5) after CDN purge.
+
+
+# =============================================================================
+# WHEN TO UPDATE THIS FILE
+# =============================================================================
+#
+# ADD a rule when:
+#   • A tool slug is renamed                 → 301 old → new (keep forever)
+#   • A page URL changes                     → 301 old → new (keep forever)
+#   • A marketing short-link is desired      → e.g., /excel, /word
+#   • A common typo needs handling           → e.g., /pricng → /pricing
+#   • A legacy URL from a domain migration   → 301 old → new
+#
+# NEVER add a rule that:
+#   • Redirects to a domain other than nosend.dev
+#   • Returns 200 for a missing page (SPA fallback)
+#   • Redirects to /404.html (breaks proper 404 status)
+#   • Applies to /assets/* or /.well-known/* paths
+#   • Creates a chain of two or more redirects (curl-test the full path)
+#   • Redirects FROM "/" anywhere (Google penalizes)
+#   • Redirects TO itself (infinite loop)
+#
+# When in doubt: do nothing. A 404 served with public/404.html (which has a
+# beautiful "Browse all tools" UI) is almost always better UX than a
+# confusing redirect. Only redirect when the intent is genuinely unambiguous.
+#
+# -----------------------------------------------------------------------------
+# Redirects are like API contracts — once published, assume they will be
+# requested forever. Google's index, user bookmarks, forum posts, and
+# social media links all point to these URLs. If you add a rule, plan to
+# keep it running for the lifetime of the domain.
+# -----------------------------------------------------------------------------
+#
+# End of file.
+# =============================================================================
