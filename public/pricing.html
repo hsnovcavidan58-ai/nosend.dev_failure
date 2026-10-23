@@ -38,7 +38,9 @@
 
   <!-- ============================================================
        BROWSER META
-       Internal asset links use RELATIVE paths (no leading slash).
+       Internal asset links use RELATIVE paths (no leading slash),
+       per project convention — works under file://, localhost,
+       and any subdirectory deployment.
        ============================================================ -->
   <meta name="theme-color" content="#2563eb">
   <meta name="format-detection" content="telephone=no">
@@ -389,8 +391,9 @@
   <a href="#main" class="skip-link">Skip to main content</a>
 
   <!-- ============================================================
-       NOSCRIPT — header/footer are injected by common.js,
-       so without JS they stay empty. Warn users clearly.
+       NOSCRIPT — header/footer are now inline, so they render even
+       without JS. This warning stays for tool pages and for users
+       who have JavaScript disabled.
        ============================================================ -->
   <noscript>
     <div class="container">
@@ -405,10 +408,79 @@
   </noscript>
 
   <!-- ============================================================
-       HEADER — MUST stay empty.
-       common.js injects logo + nav + mobile toggle.
+       HEADER — INLINE (not injected by common.js)
+
+       WHY INLINE?
+       -----------
+       common.js builds the header with ABSOLUTE paths (`/`, `/#tools`,
+       `/#privacy`, `/pricing.html`). That works when the site is served
+       from the domain root, but breaks under `file://` protocol and in
+       any subdirectory deployment.
+
+       By rendering the header markup directly here with RELATIVE paths,
+       we guarantee:
+         • Clicking the logo        → loads `index.html`.
+         • Clicking "Tools"         → loads `index.html#tools`.
+         • Clicking "Privacy"       → loads `privacy.html`.
+         • Clicking "Pricing"       → stays on `pricing.html` (this page).
+         • Works under file://, localhost, and any host.
+
+       The Pricing link carries `aria-current="page"` so it is styled
+       as active by the design system (`nav a[aria-current="page"]`)
+       without requiring JS.
+
+       HOW COMMON.JS COOPERATES
+       ------------------------
+       `injectHeader()` checks `header.children.length > 0` and skips
+       injection when content is already present — so this inline
+       markup is NOT overwritten. `setupMobileMenu()` still works
+       because the required IDs (`#primary-nav`, `#menu-toggle`)
+       and `data-icon` attributes are present.
        ============================================================ -->
-  <header></header>
+  <header>
+    <div class="container">
+      <a href="index.html" class="logo" aria-label="nosend.dev home">
+        <strong>nosend</strong>.dev
+      </a>
+
+      <nav id="primary-nav" aria-label="Main navigation">
+        <ul>
+          <li><a href="index.html#tools">Tools</a></li>
+          <li><a href="privacy.html">Privacy</a></li>
+          <li><a href="pricing.html" aria-current="page">Pricing</a></li>
+        </ul>
+      </nav>
+
+      <button
+        type="button"
+        id="menu-toggle"
+        class="menu-toggle"
+        aria-label="Open menu"
+        aria-expanded="false"
+        aria-controls="primary-nav"
+      >
+        <span data-icon="menu">
+          <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22"
+               viewBox="0 0 24 24" fill="none" stroke="currentColor"
+               stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+               aria-hidden="true" focusable="false">
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <line x1="3" y1="12" x2="21" y2="12"></line>
+            <line x1="3" y1="18" x2="21" y2="18"></line>
+          </svg>
+        </span>
+        <span data-icon="close" hidden>
+          <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22"
+               viewBox="0 0 24 24" fill="none" stroke="currentColor"
+               stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+               aria-hidden="true" focusable="false">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </span>
+      </button>
+    </div>
+  </header>
 
   <!-- ============================================================
        MAIN CONTENT
@@ -888,15 +960,38 @@
   </main>
 
   <!-- ============================================================
-       FOOTER — MUST stay empty.
-       common.js injects copyright + legal links + dynamic year.
+       FOOTER — INLINE (not injected by common.js)
+
+       Same rationale as the header above: RELATIVE paths so the links
+       work under file://, localhost, and any deployment URL.
+
+       `updateFooterYear()` in common.js still finds `#footer-year`
+       and refreshes the year — the value in the markup below is only
+       a fallback for the no-JS case.
        ============================================================ -->
-  <footer></footer>
+  <footer>
+    <div class="container">
+      <p>&copy; <span id="footer-year">2026</span> nosend.dev</p>
+      <nav aria-label="Footer">
+        <a href="privacy.html">Privacy</a>
+        <a href="terms.html">Terms</a>
+      </nav>
+    </div>
+  </footer>
 
   <!-- ============================================================
        SHARED SCRIPTS
-       common.js injects header, footer, active-link highlight, mobile menu.
-       license.js (optional here) lets the page react to an existing license.
+       common.js still handles:
+         • Mobile menu toggle   (uses #primary-nav + #menu-toggle)
+         • Footer year refresh  (uses #footer-year)
+         • Active nav highlight (best-effort — the inline Pricing
+                                 link already carries
+                                 aria-current="page", so it renders
+                                 active via CSS without JS)
+         • Double-injection guard (skips header/footer because inline
+                                   content is already present)
+       license.js lets the page react to an existing license (e.g.,
+       showing the current plan state) — safe to include here.
        ============================================================ -->
   <script src="assets/js/common.js" defer></script>
   <script src="assets/js/license.js" defer></script>
