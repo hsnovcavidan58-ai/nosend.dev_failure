@@ -659,7 +659,7 @@ Generic e-poçt = 0.2% cavab. Şəxsiləşdirmə = 5-10% cavab.
 | 6 | `assets/js/license.js` | ✅ | 2 | Bitib (stub) |
 | 7 | `favicon.svg` | ✅ | 2 | Bitib |
 | 8 | **`docs/launch-checklist.md`** | ✅ | 2 | **Bu fayl** |
-| 9 | `index.html` | ⏳ | 5 | Gözləyir |
+| 9 | `index.html` ** | ✅ | 2 | bitib|
 | 10 | `privacy.html` | ⏳ | 5 | Gözləyir |
 | 11 | `terms.html` | ⏳ | 5 | Gözləyir |
 | 12 | `404.html` | ⏳ | 5 | Gözləyir |
