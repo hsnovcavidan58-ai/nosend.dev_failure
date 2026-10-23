@@ -1,0 +1,99 @@
+# ============================================================================
+# nosend.dev — robots.txt
+# ============================================================================
+#
+# Privacy-first developer tools that run 100% in your browser.
+# Served from Cloudflare Pages. No tracking. No uploads. No user accounts.
+#
+# This file tells well-behaved web crawlers which paths they may request.
+# It is a convention, not a security mechanism — every "Disallow" path
+# below is still publicly accessible if requested directly. The
+# restrictions exist only to keep low-value URLs out of search indexes.
+#
+# ----------------------------------------------------------------------------
+# POLICY SUMMARY
+# ----------------------------------------------------------------------------
+#
+#   Path                  Access   Reason
+#   --------------------  -------  ------------------------------------------
+#   /                     Allow    Public site — all tools, pages, assets
+#   /404.html             Block    Error page — no index value, meta noindex
+#   /cdn-cgi/             Block    Cloudflare-internal endpoints
+#   (everything else)     Allow    Implicit — no rule means "allowed"
+#
+# ----------------------------------------------------------------------------
+# AI CRAWLERS
+# ----------------------------------------------------------------------------
+#
+# AI crawlers (GPTBot, ClaudeBot, PerplexityBot, CCBot, Google-Extended,
+# and similar) are intentionally ALLOWED via the User-agent: * block below.
+#
+# Rationale: users increasingly discover tools through AI assistants
+# (ChatGPT, Claude, Perplexity, Google AI Overviews). A user asking
+# "how do I merge CSV files without uploading them" should be able to
+# find nosend.dev through those channels. Blocking AI crawlers would
+# cut off a growing traffic source for a privacy-first brand.
+#
+# To change this policy in the future:
+#   * To allow citation but not training: add explicit User-agent blocks
+#     for OAI-SearchBot, PerplexityBot, and Claude-Web, but Disallow: /
+#     for GPTBot, ClaudeBot, Google-Extended, and CCBot.
+#   * To block all AI crawlers: add a "Disallow: /" group for each named
+#     user-agent listed at https://darkvisitors.com/robots-txt
+#
+# ----------------------------------------------------------------------------
+# RELATED FILES
+# ----------------------------------------------------------------------------
+#
+#   Sitemap     -> https://nosend.dev/sitemap.xml   (authoritative URL list)
+#   Security    -> public/_headers                  (CSP, HSTS, etc.)
+#   Redirects   -> public/_redirects                (301s, canonicalization)
+#
+# The sitemap is the source of truth for what SHOULD be indexed.
+# This file is the source of truth for what should NOT be indexed.
+#
+# Last updated: 2026-10-23
+# ============================================================================
+
+
+# ============================================================================
+# ALL CRAWLERS — default policy
+# ============================================================================
+
+User-agent: *
+Allow: /
+
+# Error page — excluded from search indexes.
+# Defense-in-depth: /404.html also carries <meta name="robots" content="noindex">.
+Disallow: /404.html
+
+# Cloudflare-internal endpoints — not part of the public site.
+Disallow: /cdn-cgi/
+
+
+# ============================================================================
+# SITEMAP
+# ----------------------------------------------------------------------------
+# Absolute URL required by the robots.txt spec (RFC 9309).
+# Must match the canonical sitemap location; see public/_headers for
+# cache and content-type configuration.
+# ============================================================================
+
+Sitemap: https://nosend.dev/sitemap.xml
+
+
+# ============================================================================
+# NOTES ON OMITTED DIRECTIVES
+# ----------------------------------------------------------------------------
+#   Crawl-delay    Not used — Google ignores it, and a static site on
+#                  Cloudflare edge does not need crawl throttling.
+#
+#   Host           Not used — non-standard Yandex-specific hint with no
+#                  value for a single-canonical-domain site.
+#
+#   Request-rate   Not used — non-standard, no major crawler honors it.
+#
+# If any of these ever becomes necessary (e.g., a specific misbehaving
+# crawler), add an explicit User-agent block for that crawler only.
+# Never apply a global restriction.
+# ============================================================================
