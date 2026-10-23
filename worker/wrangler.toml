@@ -1,0 +1,277 @@
+# =============================================================================
+# nosend.dev — Cloudflare Worker Configuration
+# =============================================================================
+#
+# File:     worker/wrangler.toml
+# Purpose:  Configure the license validation Worker (Cloudflare Workers)
+# Docs:     https://developers.cloudflare.com/workers/wrangler/configuration/
+#
+# This Worker validates Lemon Squeezy license keys via a single endpoint
+# (POST /validate). It is the ONLY server-side component of nosend.dev.
+# Everything else — every tool, every page — runs 100% in the browser.
+#
+# -----------------------------------------------------------------------------
+# DEPLOYMENT COMMANDS
+# -----------------------------------------------------------------------------
+#
+#   Local dev:         wrangler dev                    → http://localhost:8787
+#   Deploy (dev):      wrangler deploy                 → *.workers.dev
+#   Deploy (prod):     wrangler deploy --env production → api.nosend.dev
+#   Tail logs:         wrangler tail --env production
+#   List secrets:      wrangler secret list --env production
+#   Rollback:          wrangler rollback --env production
+#
+# -----------------------------------------------------------------------------
+# SECRETS — set per environment, NEVER in this file
+# -----------------------------------------------------------------------------
+#
+#   LS_API_KEY    Lemon Squeezy API key.   REQUIRED — validation fails without it.
+#   LS_STORE_ID   Lemon Squeezy store ID.  OPTIONAL — used for multi-store scoping.
+#
+#   Set with:
+#     wrangler secret put LS_API_KEY  --env production
+#     wrangler secret put LS_STORE_ID --env production
+#
+#   For local dev, use worker/.dev.vars (already in .gitignore):
+#     LS_API_KEY=lsq_live_...
+#     LS_STORE_ID=12345
+#
+#   ⚠️  NEVER put secrets in this file — it is committed to Git.
+#       If a secret leaks, rotate it immediately in the Lemon Squeezy
+#       dashboard and re-run `wrangler secret put`. See README →
+#       "🔒 Security Notes" for incident-response procedure.
+#
+# -----------------------------------------------------------------------------
+# LAST UPDATED: 2026-10-23
+# =============================================================================
+
+
+# =============================================================================
+# 1. WORKER IDENTITY
+# =============================================================================
+#
+#   name               Worker script name. Shown in the Cloudflare dashboard
+#                      and used in `*.workers.dev` URLs. Must be lowercase,
+#                      alphanumeric + hyphens only.
+#
+#   main               Entry point — the file Cloudflare bundles and deploys.
+#                      Relative to this wrangler.toml.
+#
+#   compatibility_date Must be a date in the PAST. Pins the Worker runtime
+#                      to a specific snapshot of Cloudflare's API surface.
+#                      Bumping can introduce breaking changes — do so
+#                      deliberately (test in dev, deploy to prod separately).
+#
+#                      Reference: https://developers.cloudflare.com/workers/
+#                                 configuration/compatibility-dates/
+# =============================================================================
+
+name = "nosend-license"
+main = "src/index.js"
+compatibility_date = "2026-10-01"
+
+
+# =============================================================================
+# 2. WORKERS.DEV EXPOSURE
+# =============================================================================
+#
+#   true  → Worker reachable at https://nosend-license.<account>.workers.dev
+#   false → Only reachable via custom routes (defined below)
+#
+#   Top-level = true  (default for dev/testing)
+#   Production overrides to false (see §5) — no public URL to probe.
+#
+# =============================================================================
+
+workers_dev = true
+
+
+# =============================================================================
+# 3. OBSERVABILITY (Workers Logs)
+# =============================================================================
+#
+#   enabled             Emit structured request logs to Cloudflare Logpush.
+#   head_sampling_rate  Fraction of requests to log (0.0–1.0).
+#                       1.0 = every request. Lower this to reduce log volume
+#                       if you ever hit the free-tier log limit (200k/day).
+#                       0.1 = 10% is statistically sufficient for insight.
+#
+#   View logs:
+#     wrangler tail --env production          (live)
+#     Cloudflare Dashboard → Workers & Pages → nosend-license → Logs
+#
+# =============================================================================
+
+[observability]
+enabled = true
+head_sampling_rate = 1.0
+
+
+# =============================================================================
+# 4. DEFAULT ENVIRONMENT VARIABLES (development)
+# =============================================================================
+#
+#   These apply to `wrangler dev` and to plain `wrangler deploy` (no --env).
+#   Production overrides them in §5.
+#
+#   ENVIRONMENT       Distinguishes dev vs prod code paths inside index.js.
+#                     Currently used only for logging clarity.
+#
+#   ALLOWED_ORIGIN    CORS `Access-Control-Allow-Origin` header value.
+#                     MUST be the exact origin of the page that calls the
+#                     Worker (not the Worker's own URL).
+#
+#                     During local development, the frontend is served on
+#                     :3000 (via `npx serve public`) or :8080
+#                     (via `python3 -m http.server`). Adjust the port here
+#                     if you use a different one.
+#
+#                     In stub mode (`license.js` CONFIG.mode = 'stub'), the
+#                     Worker is never actually called — CORS only matters
+#                     when you flip to production mode on 18 Jan 2027.
+#
+# =============================================================================
+
+[vars]
+ENVIRONMENT    = "development"
+ALLOWED_ORIGIN = "http://localhost:3000"
+
+
+# =============================================================================
+# 5. PRODUCTION ENVIRONMENT (`--env production`)
+# =============================================================================
+#
+#   Activated ONLY with: wrangler deploy --env production
+#   A plain `wrangler deploy` (no --env) uses the top-level config above —
+#   which is safe for testing but MUST NOT be used for the public site.
+#
+#   Differences from top-level:
+#     • workers_dev = false  → no public *.workers.dev endpoint
+#     • ALLOWED_ORIGIN       → locked to https://nosend.dev
+#     • Routes bound         → api.nosend.dev/* (see §6)
+#     • Secrets scoped       → set with --env production separately
+#
+# =============================================================================
+
+[env.production]
+name        = "nosend-license"
+workers_dev = false
+
+[env.production.vars]
+ENVIRONMENT    = "production"
+ALLOWED_ORIGIN = "https://nosend.dev"
+
+
+# =============================================================================
+# 6. CUSTOM DOMAIN ROUTE (production only)
+# =============================================================================
+#
+#   Binds the Worker to api.nosend.dev/* on the nosend.dev zone.
+#   `zone_name` MUST be a domain already active in your Cloudflare account
+#   (registered via Cloudflare Registrar per project docs, or transferred).
+#
+#   Pattern `api.nosend.dev/*` matches EVERY path under the subdomain:
+#     ✓ api.nosend.dev/validate
+#     ✓ api.nosend.dev/health
+#     ✓ api.nosend.dev/v1/validate
+#
+#   The Worker's `fetch()` handler is responsible for routing —
+#   currently it only responds to POST /validate (see src/index.js).
+#
+#   Cloudflare auto-creates the DNS record for api.nosend.dev when this
+#   route is deployed. No manual DNS step required.
+#
+#   If you ever need multiple routes (e.g., api-v2.nosend.dev),
+#   duplicate the [[env.production.routes]] block below.
+#
+# =============================================================================
+
+[[env.production.routes]]
+pattern   = "api.nosend.dev/*"
+zone_name = "nosend.dev"
+
+
+# =============================================================================
+# 7. OPTIONAL — FUTURE BINDINGS (currently unused)
+# =============================================================================
+#
+#   Not configured because the Worker is stateless — it performs one
+#   outbound fetch (to Lemon Squeezy) and returns the result. No storage,
+#   no queues, no KV, no D1, no R2.
+#
+#   If you ever need persistence (e.g., caching license validation results
+#   at the edge to cut Lemon Squeezy API calls), add ONE of the blocks
+#   below, then uncomment and configure per Cloudflare docs.
+#
+#   ── KV (simple key-value cache) ────────────────────────────────────────
+#   [[env.production.kv_namespaces]]
+#   binding = "LICENSE_CACHE"
+#   id      = "<namespace-id-from-dashboard>"
+#
+#   ── D1 (SQLite) ────────────────────────────────────────────────────────
+#   [[env.production.d1_databases]]
+#   binding      = "LICENSE_DB"
+#   database_name = "nosend-license"
+#   database_id  = "<database-id-from-dashboard>"
+#
+#   ── R2 (object storage) ────────────────────────────────────────────────
+#   [[env.production.r2_buckets]]
+#   binding     = "LICENSE_LOGS"
+#   bucket_name = "nosend-license-logs"
+#
+#   ── Rate limiting (native Cloudflare) ──────────────────────────────────
+#   [[env.production.unsafe.bindings]]
+#   name = "RATE_LIMITER"
+#   type = "ratelimit"
+#   namespace_id = "1001"
+#   simple = { limit = 60, period = 60 }
+#
+#   ⚠️  Any binding you add increases operational surface. Start with
+#       nothing (as now), add only when a concrete need appears.
+#
+# =============================================================================
+
+
+# =============================================================================
+# END OF FILE
+# =============================================================================
+#
+# PRE-DEPLOYMENT CHECKLIST (production — 18 January 2027)
+# -------------------------------------------------------
+#   [ ] nosend.dev zone active in Cloudflare (Registrar or transfer)
+#   [ ] `wrangler login` completed (browser OAuth)
+#   [ ] `wrangler secret put LS_API_KEY  --env production` — done
+#   [ ] `wrangler secret put LS_STORE_ID --env production` — done
+#   [ ] `wrangler deploy --env production` — succeeds
+#   [ ] `wrangler tail --env production` — shows incoming requests
+#   [ ] `curl -X POST https://api.nosend.dev/validate \`
+#         `-H 'Content-Type: application/json' \`
+#         `-d '{"licenseKey":"test"}'`
+#         → returns `{"premium":false,"reason":"invalid_key","expires":null}`
+#   [ ] `curl -I -X OPTIONS https://api.nosend.dev/validate \`
+#         `-H 'Origin: https://nosend.dev'`
+#         → returns `Access-Control-Allow-Origin: https://nosend.dev`
+#   [ ] In production, `https://nosend-license.<account>.workers.dev` returns 404
+#       (confirms workers_dev = false took effect)
+#   [ ] In the browser, `license.js` (after CONFIG.mode = 'production') can
+#       call the Worker without CORS errors — check DevTools Console
+#
+# ROLLBACK
+# --------
+#   If a deploy breaks production:
+#     wrangler rollback --env production
+#
+#   This reverts to the previous successful deployment in one command.
+#   Active requests are drained gracefully — no downtime.
+#
+# UPDATING THIS FILE
+# ------------------
+#   • Adding a new secret       → document in §"SECRETS" header, set via CLI
+#   • Adding a new route        → append another [[env.production.routes]]
+#   • Bumping compatibility_date → test in dev first, then deploy to prod
+#   • Adding storage bindings   → uncomment the relevant §7 block, configure
+#   • NEVER hardcode a secret   → Git history is permanent; use wrangler secret
+#   • NEVER remove workers_dev = false in [env.production]
+#     (that flag is what makes the API not publicly enumerable)
+#
+# =============================================================================
