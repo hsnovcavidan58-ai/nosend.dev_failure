@@ -1,6 +1,13 @@
 /* ==========================================================================
-   nosend.dev — Design System
+   nosend.dev — Design System (v2)
    Privacy-first developer tools that run 100% in your browser.
+   ==========================================================================
+   Version:  2.0
+   Updated:  2026-10-24
+   Changes:  Added pricing, B2B feature grids, FAQ accordion, enhanced
+             comparison tables, enterprise CTA, contact form. Moved pricing
+             components out of pricing.html inline styles into this shared
+             design system so business.html can reuse them.
    ==========================================================================
    Table of contents
    --------------------------------------------------------------------------
@@ -18,17 +25,23 @@
    12. Alerts & notices
    13. Progress & spinner
    14. Modal
-   15. Tables
+   15. Tables (base)
    16. Code & output
    17. Breadcrumbs
-   18. Tool panel (per-tool layout)
-   19. Footer
-   20. Utilities
-   21. Responsive
-   22. Dark mode
-   23. Accessibility
-   24. Scrollbar
-   25. Print
+   18. Tool panel
+   19. Pricing & plans (v2 NEW — moved from pricing.html)
+   20. Feature & benefit grids (v2 NEW — for business.html)
+   21. FAQ accordion (v2 NEW — moved from pricing.html)
+   22. Comparison tables (v2 NEW — enhanced)
+   23. Business CTA & enterprise (v2 NEW — for business.html)
+   24. Contact form (v2 NEW — for business.html)
+   25. Footer
+   26. Utilities
+   27. Responsive
+   28. Dark mode
+   29. Accessibility
+   30. Scrollbar
+   31. Print
    ========================================================================== */
 
 /* ==========================================================================
@@ -433,6 +446,10 @@ section + section {
   margin-top: var(--space-8);
 }
 
+.stack-xl > * + * {
+  margin-top: var(--space-12);
+}
+
 .grid {
   display: grid;
   gap: var(--space-6);
@@ -443,6 +460,12 @@ section + section {
   display: grid;
   gap: var(--space-6);
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+}
+
+.grid-3 {
+  display: grid;
+  gap: var(--space-6);
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
 }
 
 .flex {
@@ -602,6 +625,10 @@ nav a.active:hover {
 
 .hero-actions .btn {
   margin-top: 0;
+}
+
+.hero-compact {
+  padding-block: var(--space-12) var(--space-8);
 }
 
 /* ==========================================================================
@@ -799,6 +826,18 @@ nav a.active:hover {
   background: var(--info-hover);
 }
 
+.btn-outline {
+  color: var(--accent);
+  background: transparent;
+  border-color: var(--accent);
+  box-shadow: none;
+}
+
+.btn-outline:hover {
+  color: var(--text-inverse);
+  background: var(--accent);
+}
+
 /* --- Sizes --- */
 
 .btn-sm {
@@ -810,6 +849,11 @@ nav a.active:hover {
 .btn-lg {
   padding: 0.875rem 1.75rem;
   font-size: var(--text-base);
+}
+
+.btn-xl {
+  padding: 1rem 2rem;
+  font-size: var(--text-lg);
 }
 
 .btn-block {
@@ -1066,6 +1110,11 @@ input[type="file"]::file-selector-button:hover {
   margin-top: var(--space-2);
   font-size: var(--text-xs);
   color: var(--error);
+}
+
+.field-required {
+  color: var(--error);
+  margin-left: 0.125rem;
 }
 
 .options-group {
@@ -1438,7 +1487,7 @@ input[type="file"]::file-selector-button:hover {
 }
 
 /* ==========================================================================
-   15. TABLES
+   15. TABLES (base)
    ========================================================================== */
 
 .table {
@@ -1606,7 +1655,558 @@ pre,
 }
 
 /* ==========================================================================
-   19. FOOTER
+   19. PRICING & PLANS (v2 NEW — moved from pricing.html inline)
+   ==========================================================================
+   Used by pricing.html and business.html. Both pages share the same
+   three-tier pricing card layout. Moving this into the design system
+   ensures visual consistency across both sales pages.
+   ========================================================================== */
+
+.pricing-grid {
+  display: grid;
+  gap: var(--space-6);
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  margin-top: var(--space-8);
+  align-items: stretch;
+}
+
+.pricing-card {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  padding: var(--space-8);
+  background: var(--surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  transition: var(--transition);
+  height: 100%;
+}
+
+.pricing-card:hover {
+  border-color: var(--accent);
+  box-shadow: var(--shadow-md);
+}
+
+.pricing-featured {
+  border-color: var(--accent);
+  border-width: 2px;
+  box-shadow: var(--shadow-md);
+}
+
+.pricing-featured:hover {
+  box-shadow: var(--shadow-lg);
+}
+
+.pricing-badge {
+  position: absolute;
+  top: var(--space-4);
+  right: var(--space-4);
+}
+
+.pricing-name {
+  font-size: var(--text-xl);
+  font-weight: var(--weight-bold);
+  color: var(--text-heading);
+  margin: 0 0 var(--space-2);
+}
+
+.pricing-description {
+  font-size: var(--text-sm);
+  color: var(--text-muted);
+  margin: 0 0 var(--space-6);
+  line-height: var(--leading-relaxed);
+  min-height: 2.75rem;
+}
+
+.pricing-price {
+  font-size: var(--text-4xl);
+  font-weight: var(--weight-bold);
+  color: var(--text-heading);
+  margin: 0 0 var(--space-1);
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+
+.pricing-period {
+  font-size: var(--text-base);
+  font-weight: var(--weight-normal);
+  color: var(--text-muted);
+  letter-spacing: normal;
+}
+
+.pricing-meta {
+  font-size: var(--text-sm);
+  color: var(--text-muted);
+  margin: 0 0 var(--space-6);
+}
+
+.pricing-features {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 var(--space-8);
+  flex: 1;
+}
+
+.pricing-features li {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+  padding: var(--space-2) 0;
+  font-size: var(--text-sm);
+  color: var(--text);
+  line-height: var(--leading-snug);
+}
+
+.pricing-features li svg {
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  margin-top: 2px;
+  color: var(--success);
+}
+
+.pricing-features li.is-disabled {
+  color: var(--text-subtle);
+}
+
+.pricing-features li.is-disabled svg {
+  color: var(--text-subtle);
+}
+
+.pricing-cta {
+  margin-top: auto;
+}
+
+.pricing-cta .btn {
+  display: flex;
+  width: 100%;
+}
+
+/* --- Pricing note (launch window, urgency banner) --- */
+
+.pricing-note {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-semibold);
+  background: var(--warning-subtle);
+  color: var(--warning-hover);
+  border-radius: var(--radius-full);
+  margin-bottom: var(--space-4);
+}
+
+/* ==========================================================================
+   20. FEATURE & BENEFIT GRIDS (v2 NEW — for business.html)
+   ==========================================================================
+   B2B white-label page uses feature grids to highlight privacy, compliance,
+   and integration benefits. Distinct from .card because business features
+   are more content-heavy and use a compact icon-and-title layout.
+   ========================================================================== */
+
+.feature-grid {
+  display: grid;
+  gap: var(--space-6);
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  margin-top: var(--space-8);
+}
+
+.feature-card {
+  padding: var(--space-6);
+  background: var(--surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius);
+  transition: var(--transition);
+}
+
+.feature-card:hover {
+  border-color: var(--accent);
+  box-shadow: var(--shadow-sm);
+}
+
+.feature-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-md);
+  background: var(--accent-subtle);
+  color: var(--accent);
+  margin-bottom: var(--space-4);
+}
+
+.feature-icon svg {
+  width: 24px;
+  height: 24px;
+}
+
+.feature-card h3 {
+  font-size: var(--text-lg);
+  margin-bottom: var(--space-2);
+  color: var(--text-heading);
+}
+
+.feature-card p {
+  font-size: var(--text-sm);
+  color: var(--text-muted);
+  line-height: var(--leading-relaxed);
+  margin: 0;
+}
+
+/* --- Trust badges (compliance, security) --- */
+
+.trust-badges {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-4);
+  margin-top: var(--space-6);
+}
+
+.trust-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-semibold);
+  color: var(--text-muted);
+  background: var(--bg-alt);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-full);
+}
+
+.trust-badge svg {
+  width: 16px;
+  height: 16px;
+  color: var(--success);
+}
+
+/* ==========================================================================
+   21. FAQ ACCORDION (v2 NEW — moved from pricing.html inline)
+   ==========================================================================
+   Used on pricing.html and business.html. Static markup (no JS accordion)
+   because the FAQ items are meant to be visible by default for SEO — all
+   content should be present in the initial HTML.
+   ========================================================================== */
+
+.faq-list {
+  margin-top: var(--space-6);
+}
+
+.faq-item {
+  padding: var(--space-5) 0;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.faq-item:first-child {
+  padding-top: 0;
+}
+
+.faq-item:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.faq-question {
+  font-size: var(--text-lg);
+  font-weight: var(--weight-semibold);
+  color: var(--text-heading);
+  margin: 0 0 var(--space-2);
+  line-height: var(--leading-snug);
+}
+
+.faq-answer {
+  margin: 0;
+  color: var(--text-muted);
+  line-height: var(--leading-relaxed);
+}
+
+.faq-answer a {
+  color: var(--accent);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.faq-answer a:hover {
+  color: var(--accent-hover);
+}
+
+/* ==========================================================================
+   22. COMPARISON TABLES (v2 NEW — enhanced)
+   ==========================================================================
+   Feature-comparison tables on pricing.html and business.html. More
+   structured than the base .table because it needs centered checkmarks,
+   colored yes/no cells, and mobile horizontal scroll.
+   ========================================================================== */
+
+.comparison-table-wrap {
+  margin-top: var(--space-6);
+  overflow-x: auto;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  -webkit-overflow-scrolling: touch;
+}
+
+.comparison-table-wrap .table {
+  border: none;
+  border-radius: 0;
+  min-width: 540px;
+}
+
+.comparison-table-wrap .table th,
+.comparison-table-wrap .table td {
+  text-align: center;
+  padding: var(--space-3) var(--space-4);
+}
+
+.comparison-table-wrap .table th:first-child,
+.comparison-table-wrap .table td:first-child {
+  text-align: left;
+}
+
+.comparison-table-wrap .table td.is-yes {
+  color: var(--success);
+  font-weight: var(--weight-semibold);
+}
+
+.comparison-table-wrap .table td.is-no {
+  color: var(--text-subtle);
+}
+
+.comparison-table-wrap .table td.is-highlight {
+  background: var(--accent-muted);
+  font-weight: var(--weight-semibold);
+}
+
+/* ==========================================================================
+   23. BUSINESS CTA & ENTERPRISE (v2 NEW — for business.html)
+   ==========================================================================
+   Business page ends with a prominent CTA section that differs from the
+   homepage hero CTA — it is darker, more enterprise-oriented, and uses
+   the full-width layout instead of centered text.
+   ========================================================================== */
+
+.business-cta {
+  padding: var(--space-12) var(--space-8);
+  background: linear-gradient(
+    135deg,
+    var(--primary) 0%,
+    #1e293b 100%
+  );
+  border-radius: var(--radius-lg);
+  color: var(--text-inverse);
+  text-align: center;
+  margin-top: var(--space-12);
+}
+
+.business-cta h2 {
+  font-size: var(--text-3xl);
+  color: var(--text-inverse);
+  margin-bottom: var(--space-4);
+  max-width: 20ch;
+  margin-inline: auto;
+}
+
+.business-cta p {
+  font-size: var(--text-lg);
+  color: rgba(255, 255, 255, 0.8);
+  max-width: 60ch;
+  margin-inline: auto;
+  margin-bottom: var(--space-8);
+}
+
+.business-cta .btn {
+  padding: 0.875rem 2rem;
+  font-size: var(--text-base);
+}
+
+.business-cta .btn-secondary {
+  background: transparent;
+  color: var(--text-inverse);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.business-cta .btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.5);
+  color: var(--text-inverse);
+}
+
+/* --- Embed code example (business.html) --- */
+
+.embed-example {
+  margin-top: var(--space-6);
+  padding: var(--space-6);
+  background: var(--bg-alt);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+}
+
+.embed-example h3 {
+  font-size: var(--text-base);
+  font-weight: var(--weight-semibold);
+  color: var(--text-heading);
+  margin-bottom: var(--space-3);
+}
+
+.embed-example pre {
+  margin: 0;
+  background: var(--surface);
+}
+
+/* --- Enterprise card (business.html) --- */
+
+.enterprise-card {
+  padding: var(--space-8);
+  background: var(--surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  margin-top: var(--space-8);
+}
+
+.enterprise-card h3 {
+  font-size: var(--text-2xl);
+  margin-bottom: var(--space-3);
+}
+
+.enterprise-card p {
+  color: var(--text-muted);
+  margin-bottom: var(--space-6);
+}
+
+.enterprise-features {
+  display: grid;
+  gap: var(--space-4);
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  margin-bottom: var(--space-6);
+}
+
+.enterprise-features li {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+  font-size: var(--text-sm);
+  line-height: var(--leading-snug);
+  list-style: none;
+}
+
+.enterprise-features li svg {
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  margin-top: 2px;
+  color: var(--success);
+}
+
+/* ==========================================================================
+   24. CONTACT FORM (v2 NEW — for business.html)
+   ==========================================================================
+   Business page uses a two-column layout for contact form (form + sidebar
+   with alternative contact methods). This is distinct from the base form
+   styles because it needs more spacing, larger inputs, and a descriptive
+   label style for enterprise inquiries.
+   ========================================================================== */
+
+.contact-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  padding: var(--space-8);
+  background: var(--surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+}
+
+.contact-form .field {
+  margin-bottom: 0;
+}
+
+.contact-form .field-row {
+  display: grid;
+  gap: var(--space-4);
+  grid-template-columns: 1fr 1fr;
+}
+
+.contact-form label {
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  color: var(--text);
+}
+
+.contact-form input,
+.contact-form textarea,
+.contact-form select {
+  font-size: var(--text-base);
+  padding: 0.75rem 1rem;
+}
+
+.contact-form textarea {
+  min-height: 140px;
+}
+
+.contact-form button[type="submit"] {
+  align-self: flex-start;
+  padding: 0.875rem 1.75rem;
+  font-size: var(--text-base);
+}
+
+.contact-form-help {
+  font-size: var(--text-sm);
+  color: var(--text-muted);
+  margin-top: var(--space-2);
+}
+
+.contact-form-help a {
+  color: var(--accent);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+/* --- Contact sidebar (alternative contact methods) --- */
+
+.contact-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.contact-method {
+  padding: var(--space-5);
+  background: var(--bg-alt);
+  border-radius: var(--radius-md);
+}
+
+.contact-method h4 {
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+  color: var(--text-heading);
+  margin-bottom: var(--space-2);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.contact-method p {
+  font-size: var(--text-sm);
+  color: var(--text-muted);
+  margin-bottom: var(--space-2);
+}
+
+.contact-method a {
+  font-size: var(--text-base);
+  font-weight: var(--weight-semibold);
+  color: var(--accent);
+  text-decoration: none;
+}
+
+.contact-method a:hover {
+  text-decoration: underline;
+}
+
+/* ==========================================================================
+   25. FOOTER
    ========================================================================== */
 
 footer {
@@ -1644,7 +2244,7 @@ footer a:hover {
 }
 
 /* ==========================================================================
-   20. UTILITIES
+   26. UTILITIES
    ========================================================================== */
 
 /* --- Anchor scroll offset (sticky header compensation) -------------------
@@ -1720,6 +2320,8 @@ footer a:hover {
   color: var(--text-inverse);
 }
 
+/* --- Text utilities --- */
+
 .text-center { text-align: center; }
 .text-left   { text-align: left; }
 .text-right  { text-align: right; }
@@ -1740,27 +2342,41 @@ footer a:hover {
 .text-lg { font-size: var(--text-lg); }
 .text-xl { font-size: var(--text-xl); }
 
+/* --- Spacing utilities --- */
+
 .mt-0 { margin-top: 0; }
 .mt-2 { margin-top: var(--space-2); }
 .mt-4 { margin-top: var(--space-4); }
 .mt-6 { margin-top: var(--space-6); }
 .mt-8 { margin-top: var(--space-8); }
+.mt-12 { margin-top: var(--space-12); }
 
 .mb-0 { margin-bottom: 0; }
 .mb-2 { margin-bottom: var(--space-2); }
 .mb-4 { margin-bottom: var(--space-4); }
 .mb-6 { margin-bottom: var(--space-6); }
 .mb-8 { margin-bottom: var(--space-8); }
+.mb-12 { margin-bottom: var(--space-12); }
+
+.py-8 { padding-block: var(--space-8); }
+.py-12 { padding-block: var(--space-12); }
+
+/* --- Width utilities --- */
 
 .w-full      { width: 100%; }
 .max-w-prose { max-width: 65ch; }
+.max-w-narrow { max-width: 45ch; }
 .mx-auto     { margin-inline: auto; }
+
+/* --- Truncation --- */
 
 .truncate {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+
+/* --- Badges --- */
 
 .badge {
   display: inline-flex;
@@ -1778,6 +2394,9 @@ footer a:hover {
 .badge-success { background: var(--success-subtle); color: var(--success-hover); }
 .badge-warning { background: var(--warning-subtle); color: var(--warning-hover); }
 .badge-error   { background: var(--error-subtle);   color: var(--error-hover); }
+.badge-info    { background: var(--info-subtle);    color: var(--info-hover); }
+
+/* --- Dividers --- */
 
 .divider {
   height: 1px;
@@ -1786,13 +2405,25 @@ footer a:hover {
   margin-block: var(--space-8);
 }
 
+.divider-strong {
+  background: var(--border);
+}
+
 /* ==========================================================================
-   21. RESPONSIVE
+   27. RESPONSIVE
    ========================================================================== */
 
 @media (max-width: 900px) {
   .hero {
     padding-block: var(--space-12) var(--space-8);
+  }
+
+  .business-cta {
+    padding: var(--space-10) var(--space-6);
+  }
+
+  .business-cta h2 {
+    font-size: var(--text-2xl);
   }
 }
 
@@ -1820,7 +2451,9 @@ footer a:hover {
     font-size: clamp(var(--text-2xl), 7vw, var(--text-4xl));
   }
 
-  .grid {
+  .grid,
+  .grid-2,
+  .grid-3 {
     grid-template-columns: 1fr;
   }
 
@@ -1873,6 +2506,30 @@ footer a:hover {
   .trust-section {
     padding: var(--space-6);
   }
+
+  .pricing-card {
+    padding: var(--space-6);
+  }
+
+  .pricing-price {
+    font-size: var(--text-3xl);
+  }
+
+  .business-cta {
+    padding: var(--space-8) var(--space-4);
+  }
+
+  .contact-form {
+    padding: var(--space-6);
+  }
+
+  .contact-form .field-row {
+    grid-template-columns: 1fr;
+  }
+
+  .enterprise-card {
+    padding: var(--space-6);
+  }
 }
 
 @media (max-width: 480px) {
@@ -1914,10 +2571,34 @@ footer a:hover {
   .table td {
     padding: var(--space-2) var(--space-3);
   }
+
+  .pricing-card {
+    padding: var(--space-5);
+  }
+
+  .pricing-features li {
+    font-size: var(--text-xs);
+  }
+
+  .business-cta h2 {
+    font-size: var(--text-xl);
+  }
+
+  .business-cta p {
+    font-size: var(--text-base);
+  }
 }
 
 /* ==========================================================================
-   22. DARK MODE
+   28. DARK MODE
+   ==========================================================================
+   Two entry points:
+     1. System preference (@media prefers-color-scheme: dark) — default
+     2. Explicit override ([data-theme="dark"]) — future JS toggle
+
+   The [data-theme="light"] selector blocks system dark mode when the user
+   has explicitly chosen light. No such toggle exists yet, but the selector
+   is in place so adding one later requires zero CSS changes.
    ========================================================================== */
 
 @media (prefers-color-scheme: dark) {
@@ -1961,6 +2642,14 @@ footer a:hover {
   :root:not([data-theme="light"]) header {
     background-color: rgba(15, 23, 42, 0.85);
   }
+
+  :root:not([data-theme="light"]) .business-cta {
+    background: linear-gradient(
+      135deg,
+      #020617 0%,
+      #0f172a 100%
+    );
+  }
 }
 
 [data-theme="dark"] {
@@ -1987,8 +2676,12 @@ footer a:hover {
   background-color: rgba(15, 23, 42, 0.85);
 }
 
+[data-theme="dark"] .business-cta {
+  background: linear-gradient(135deg, #020617 0%, #0f172a 100%);
+}
+
 /* ==========================================================================
-   23. ACCESSIBILITY
+   29. ACCESSIBILITY
    ========================================================================== */
 
 :focus-visible {
@@ -1998,7 +2691,9 @@ footer a:hover {
 
 .btn:focus-visible,
 .card:focus-visible,
-a.card:focus-visible {
+a.card:focus-visible,
+.pricing-card:focus-within,
+.feature-card:focus-within {
   outline: none;
   box-shadow: var(--focus-ring);
 }
@@ -2023,7 +2718,7 @@ a.card:focus-visible {
 }
 
 /* ==========================================================================
-   24. SCROLLBAR
+   30. SCROLLBAR
    ========================================================================== */
 
 * {
@@ -2052,7 +2747,7 @@ a.card:focus-visible {
 }
 
 /* ==========================================================================
-   25. PRINT
+   31. PRINT
    ========================================================================== */
 
 @media print {
@@ -2062,6 +2757,8 @@ a.card:focus-visible {
   .btn,
   .dropzone,
   .menu-toggle,
+  .pricing-cta,
+  .contact-form button[type="submit"],
   .no-print {
     display: none !important;
   }
@@ -2081,9 +2778,23 @@ a.card:focus-visible {
     padding: 0;
   }
 
-  .card {
+  .card,
+  .pricing-card,
+  .feature-card,
+  .enterprise-card {
     border: 1px solid #000;
     box-shadow: none;
+  }
+
+  .business-cta {
+    background: none;
+    border: 2px solid #000;
+    color: #000;
+  }
+
+  .business-cta h2,
+  .business-cta p {
+    color: #000;
   }
 
   h1, h2, h3 {
@@ -2096,4 +2807,13 @@ a.card:focus-visible {
     word-wrap: break-word;
     border: 1px solid #000;
   }
+
+  .comparison-table-wrap {
+    overflow: visible;
+    border: 1px solid #000;
+  }
 }
+
+/* ==========================================================================
+   END OF FILE
+   ========================================================================== */

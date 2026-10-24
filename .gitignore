@@ -1,86 +1,199 @@
 # =============================================================================
-# nosend.dev — Git Ignore Rules
+# nosend.dev — .gitignore
 # =============================================================================
 #
-# ⚠️  SECURITY-CRITICAL FILE — DO NOT EDIT WITHOUT SECURITY REVIEW
+# Project:      nosend.dev — privacy-first developer tools
+# Repository:   github.com/<owner>/nosend.dev (private)
+# Stack:        Vanilla HTML/CSS/JS  ·  Cloudflare Pages  ·  Cloudflare Workers
+#               Lemon Squeezy (payments)  ·  Wrangler CLI  ·  Node.js 18+
 #
-# This file is the last line of defense against accidental secret leaks.
-# The entries in the "🔴 SECRETS" and "🔴 CLOUDFLARE WRANGLER" sections
-# below MUST NEVER be removed, renamed, or commented out.
+# =============================================================================
+# ⚠️  THIS FILE IS SECURITY-CRITICAL — READ BEFORE EDITING
+# =============================================================================
 #
-# If any of the following ever lands in Git history, treat the corresponding
-# credential as COMPROMISED and rotate it immediately. See README.md →
-# "🔒 Security Notes" for the incident-response procedure.
+# A single committed secret can destroy the entire project:
 #
-#   File pattern         Secret it typically contains
-#   ─────────────────    ─────────────────────────────────────────────────────
-#   .env / .env.*        General environment secrets
-#   .dev.vars            LS_API_KEY (Lemon Squeezy)          ← CRITICAL
-#   .dev.vars.*          Variants of the above
-#   .wrangler/           Local Worker state, may cache secrets
-#   *.pem / *.key        TLS / signing private keys
+#   • Public GitHub repos are scanned by credential-harvesting bots within
+#     ~5 minutes of every push. Private repos are scanned too (insider leaks,
+#     misconfigured mirrors, GitHub Actions logs).
 #
-# Threat model:
-#   Public GitHub repos are scanned by automated credential-harvesting bots
-#   within ~5 minutes of every push. A leaked Lemon Squeezy API key allows
-#   full account takeover and immediate revenue-model collapse.
+#   • A leaked LS_API_KEY (Lemon Squeezy) grants full account takeover —
+#     license issuing, customer data, revenue-model collapse.
+#
+#   • A leaked .dev.vars exposes the same key to anyone with repo access.
+#
+#   • Once a secret lands in Git history, `git rm` does NOT remove it.
+#     The only safe response is: (1) rotate the secret immediately,
+#     (2) purge history with `git filter-repo` / BFG, (3) force-push
+#     every branch, (4) audit access logs.
+#
+# See README.md → "🔒 Security Notes" for the full incident-response
+# procedure. See the "SECRETS" section below for the mandatory patterns.
+#
+# =============================================================================
+# RULES FOR EDITING THIS FILE
+# =============================================================================
+#
+#   1. NEVER delete a rule under "SECRETS" or "CLOUDFLARE WRANGLER" without
+#      a security review. Those two sections are the last line of defense.
+#
+#   2. NEVER add a `!` negation rule that re-includes a secret path.
+#
+#   3. NEVER ignore `public/` — it is the Cloudflare Pages deploy root and
+#      MUST stay tracked. Ignoring it breaks every deploy.
+#
+#   4. NEVER ignore `_template/`, `docs/`, `worker/wrangler.toml`, or any
+#      `.html` / `.css` / `.js` file under `public/` — all are source.
+#
+#   5. When adding a new tool (npm dependency, build tool, framework),
+#      add its cache/output patterns in the correct section below.
+#
+#   6. Verify before every commit:
+#        git status --ignored     → confirm expected files are ignored
+#        git check-ignore -v .env → confirm the rule that matches
 #
 # =============================================================================
 
 
-# -----------------------------------------------------------------------------
-# 🔴 SECRETS & ENVIRONMENT VARIABLES
-# -----------------------------------------------------------------------------
-# Never commit any file containing real credentials, API keys, or tokens.
-# Only `.env.example` is intentionally tracked, as a documented template.
+# =============================================================================
+# 🔴 1. SECRETS & CREDENTIALS — MANDATORY, DO NOT REMOVE
+# =============================================================================
+#
+# Any file in this section MUST NEVER be tracked. If any of these appears in
+# `git status` as untracked, fix the pattern — do not `git add` it.
+#
+# What leaks if this section is broken:
+#   .env / .env.*     → general environment secrets
+#   .dev.vars         → LS_API_KEY (Lemon Squeezy)          ← CATASTROPHIC
+#   .dev.vars.*       → variants of the above
+#   *.pem / *.key     → TLS / signing private keys
+#   secrets.json      → arbitrary secret bundles
+#
+# All of these patterns below are anchored to reject ONLY the secret files,
+# never the legitimate source files that contain the substring "env" or "key"
+# (e.g., public/assets/js/license.js must remain tracked).
+# =============================================================================
 
+# --- Environment files ---
 .env
 .env.*
+.env.local
+.env.*.local
+.env.development
+.env.production
+.env.staging
+.env.test
 !.env.example
 
+# --- Cloudflare Wrangler local secrets (CRITICAL — LS_API_KEY) ---
 .dev.vars
 .dev.vars.*
+worker/.dev.vars
+worker/.dev.vars.*
 
+# --- Private keys, certificates, keystores ---
 *.pem
 *.key
 *.p12
 *.pfx
+*.jks
+*.keystore
+*.truststore
+*.cer
+*.crt
+*.der
+!*.crt.example
+!*.pem.example
 
+# --- Cloud provider & service credentials ---
 secrets.json
 credentials.json
 service-account.json
+*-credentials.json
+*-service-account.json
+google-services.json
+firebase-adminsdk*.json
+
+# --- Token files, CLI auth caches ---
+.npmrc.local
+.yarnrc.local
+.pypirc
+.netrc
+.authinfo
+*.token
+*token.txt
+*secrets*.json
+*secret*.yaml
+*secret*.yml
+!src/**/*secrets*.ts
+!public/**/*secret*.html
+
+# --- Wrangler account cache (contains session tokens) ---
+.wrangler/accounts/
+.mf/accounts/
 
 
-# -----------------------------------------------------------------------------
-# 🔴 CLOUDFLARE WRANGLER (Workers & Pages local tooling)
-# -----------------------------------------------------------------------------
+# =============================================================================
+# 🔴 2. CLOUDFLARE WRANGLER (Workers & Pages local tooling)
+# =============================================================================
+#
 # `.wrangler/` holds local Wrangler state: KV/D1/R2 emulation, build cache,
 # and — most importantly — secrets loaded by `wrangler dev` from `.dev.vars`.
-# It is regenerated on demand and MUST NOT be tracked.
+# It is regenerated on demand and MUST NEVER be tracked.
+#
+# `.mf/` and `.miniflare/` are Miniflare's local storage directories, used
+# internally by `wrangler dev` to emulate Cloudflare services. Same rule:
+# never track, always regenerate.
+#
+# Note: `worker/wrangler.toml` is explicitly NOT ignored — it is source
+# configuration and MUST be tracked. Only `.wrangler.toml.bak` (backups)
+# is excluded.
+# =============================================================================
 
+# --- Wrangler state directories ---
 .wrangler/
 .wrangler.toml.bak
 worker/.wrangler/
-worker/.dev.vars
-worker/.dev.vars.*
+worker/.wrangler.toml.bak
 
-# Miniflare local storage (used by `wrangler dev` under the hood)
+# --- Miniflare local storage ---
 .mf/
 .miniflare/
+worker/.mf/
+worker/.miniflare/
+
+# --- Wrangler Pages local state ---
+.wrangler/pages/
+worker/.wrangler/pages/
+
+# --- Wrangler generated types (regenerate with `wrangler types`) ---
+worker/src/worker-configuration.d.ts
+worker/src/env.d.ts
+!worker/src/env.example.d.ts
 
 
-# -----------------------------------------------------------------------------
-# DEPENDENCIES
-# -----------------------------------------------------------------------------
+# =============================================================================
+# 3. NODE.JS DEPENDENCIES
+# =============================================================================
+#
+# Dependencies are installed with `npm install` (or `yarn` / `pnpm`) and are
+# fully reproducible from `package-lock.json` / `yarn.lock` /
+# `pnpm-lock.yaml`. NEVER commit `node_modules/`.
+#
+# Lockfiles ARE tracked (they are not ignored here — see "NOT ignored" below).
+# =============================================================================
 
 node_modules/
 jspm_packages/
 web_modules/
 bower_components/
-pnpm-store/
 .pnpm-store/
+.pnpm-store-*
+pnpm-store/
+.pnpm-virtual-store/
 
-# Yarn PnP (zero-install) — keep required metadata, ignore the rest
+# --- Yarn Plug'n'Play (zero-install) ---
+# Keep required metadata, ignore the heavy generated content.
 .pnp.*
 .yarn/*
 !.yarn/patches
@@ -88,24 +201,47 @@ pnpm-store/
 !.yarn/releases
 !.yarn/sdks
 !.yarn/versions
+!.yarn/install-state.gz
+
+# --- npm cache (in case `npm install --cache .` is ever used) ---
+.npm/
+.npm-cache/
+.npmrc.bak
 
 
-# -----------------------------------------------------------------------------
-# BUILD OUTPUT & DISTRIBUTION
-# -----------------------------------------------------------------------------
-# NOTE: `public/` is intentionally NOT ignored — it is the Cloudflare Pages
-# deploy root and MUST remain tracked in Git.
+# =============================================================================
+# 4. BUILD OUTPUT & DISTRIBUTION
+# =============================================================================
+#
+# ⚠️  `public/` is intentionally NOT ignored — it is the Cloudflare Pages
+# deploy root and MUST remain tracked in Git. Ignoring it breaks every
+# production deploy.
+#
+# Only generated, non-source directories are excluded below. The project
+# intentionally has no build step for the frontend (static HTML + CSS + JS),
+# but future tooling (bundlers, preprocessors, minifiers) may add one.
+# =============================================================================
 
+# --- Generic build output ---
 dist/
 dist-ssr/
 build/
 build/Release/
+build/Debug/
 out/
 .output/
+.output-public/
+public-build/
+_build/
+_release/
 
+# --- TypeScript incremental build info ---
 *.tsbuildinfo
+*.d.ts.map
+*.js.map
+!public/**/*.min.js
 
-# Framework / bundler output
+# --- Framework / bundler output (future-proofing) ---
 .next/
 .nuxt/
 .svelte-kit/
@@ -117,57 +253,91 @@ out/
 .parcel-cache/
 .cache/
 .turbo/
-.firebase/
-.dynamodb/
+.nx/
+.snowpack/
 .vuepress/dist/
 .vuepress/.temp/
-**/.vitepress/dist
-**/.vitepress/cache
+**/.vitepress/dist/
+**/.vitepress/cache/
+**/.docusaurus/
+
+# --- Cloudflare Pages build cache ---
+.cf-pages/
+.cloudflare/
+.wrangler/pages-build/
+
+# --- Vite / Rollup / esbuild intermediates ---
+*.rollup.cache/
+.vite-cache/
+.esbuild-cache/
 
 
-# -----------------------------------------------------------------------------
-# LOGS
-# -----------------------------------------------------------------------------
+# =============================================================================
+# 5. LOGS
+# =============================================================================
+#
+# Log files contain runtime information, request traces, and — often —
+# accidentally-leaked secrets (e.g., a `curl -v` dump with an Authorization
+# header, or a worker log with an API key in the query string).
+#
+# NEVER commit logs. NEVER paste a log into an issue without scrubbing it.
+# =============================================================================
 
-logs
+logs/
+logs.txt
 *.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-lerna-debug.log*
 pnpm-debug.log*
+lerna-debug.log*
+lerna-debug.log*
+wrangler.log
+wrangler-*.log
+*.log.*
+!public/**/*.log.txt
 
+# --- Report files ---
 report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
+reports/
+*.report.json
 
 
-# -----------------------------------------------------------------------------
-# RUNTIME DATA
-# -----------------------------------------------------------------------------
-
-pids
-*.pid
-*.seed
-*.pid.lock
-.node_repl_history
-
-
-# -----------------------------------------------------------------------------
-# TESTING & COVERAGE
-# -----------------------------------------------------------------------------
+# =============================================================================
+# 6. TESTING & COVERAGE
+# =============================================================================
+#
+# Test output and coverage reports are generated artifacts — always
+# reproducible by running `npm test` or `npm run test:coverage`.
+# =============================================================================
 
 coverage/
+coverage-final.json
 *.lcov
 .nyc_output/
 lib-cov/
+.nycrc.local
+.mocharc.local.*
+jest-report*.json
+vitest-report*.json
+__snapshots__/*.snap.new
+__snapshots__/*.snap.pending
 
 
-# -----------------------------------------------------------------------------
-# TOOL CACHES
-# -----------------------------------------------------------------------------
+# =============================================================================
+# 7. TOOL CACHES & INTERMEDIATES
+# =============================================================================
+#
+# Linter, formatter, and compiler caches are transient and machine-specific.
+# They will be rebuilt automatically on next run.
+# =============================================================================
 
-.npm/
 .eslintcache
+.eslintcache.*
 .stylelintcache
+.stylelintcache.*
+.prettiercache
+.prettiercache.*
 .grunt/
 .lock-wscript
 *.tgz
@@ -175,83 +345,406 @@ lib-cov/
 .tern-port
 .vscode-test
 .node-gyp/
+.node_repl_history
+.node-dev
+.node-version
+.nvmrc.local
 
 
-# -----------------------------------------------------------------------------
-# TEMPORARY & BACKUP FILES
-# -----------------------------------------------------------------------------
+# =============================================================================
+# 8. TEMPORARY, BACKUP & SWAP FILES
+# =============================================================================
+#
+# Editor crash recovery, atomic writes, and shell backups all leave these
+# files behind. None have value in version control.
+# =============================================================================
 
 *.bak
+*.backup
 *.orig
 *.rej
 *.tmp
 *.temp
 *.swp
 *.swo
+*.swn
 *~
+*#*#
+.~lock.*#
 .history/
 .tmp/
 .temp/
+.trash/
 
 
-# -----------------------------------------------------------------------------
-# OPERATING SYSTEM METADATA
-# -----------------------------------------------------------------------------
+# =============================================================================
+# 9. OPERATING SYSTEM METADATA
+# =============================================================================
+#
+# macOS (.DS_Store, ._*), Windows (Thumbs.db, Desktop.ini, $RECYCLE.BIN),
+# and Linux (some file managers) all create metadata that is machine-
+# specific, valueless in Git, and noisy in `git status`.
+# =============================================================================
 
+# --- macOS ---
 .DS_Store
 .DS_Store?
 ._*
 .Spotlight-V100
 .Trashes
+.fseventsd
+Icon?
+*.AppleDouble
+*.AppleDB
+*.AppleDesktop
 
+# --- Windows ---
 ehthumbs.db
+ehthumbs_vista.db
 Thumbs.db
+Thumbs.db:encryptable
 Desktop.ini
 $RECYCLE.BIN/
 *.lnk
+*.stackdump
+
+# --- Linux desktop metadata ---
+.directory
+.Trash-*
+.nfs*
 
 
-# -----------------------------------------------------------------------------
-# EDITORS & IDEs
-# -----------------------------------------------------------------------------
+# =============================================================================
+# 10. EDITORS & IDEs
+# =============================================================================
+#
+# Local editor configuration is machine- and developer-specific. Sharing it
+# creates noise and conflict. Each developer keeps their own preferences.
+#
+# Exception: a project-wide `.editorconfig` (if ever added) SHOULD be tracked
+# — it enforces consistent formatting across editors and is intentionally not
+# covered by the rules below.
+# =============================================================================
 
+# --- VS Code ---
 .vscode/
+!.vscode/extensions.json
+!.vscode/settings.example.json
+*.code-workspace
+
+# --- JetBrains (IntelliJ, WebStorm, PhpStorm, etc.) ---
 .idea/
 *.iml
-*.code-workspace
+*.ipr
+*.iws
+!*.iml.example
+
+# --- Sublime Text ---
 *.sublime-project
 *.sublime-workspace
+sublime-project.local.json
+
+# --- Vim / Neovim ---
+.vim/
+.nvim/
+*.vimrc.bak
+
+# --- Emacs ---
+*~
+\#*\#
+.\#*
+
+# --- Eclipse / NetBeans ---
 .project
 .classpath
 .settings/
 nbproject/
+nbproject/private/
 
-# AI coding assistants (local config only — do not track)
+# --- Kate / KDevelop ---
+.kde/
+.kdev4/
+*.kdev4
+*.kate-swp
+
+# --- Xcode (unlikely for this stack, but harmless) ---
+xcuserdata/
+*.xcuserstate
+*.xcscmblueprint
+
+# --- Fleet ---
+.fleet/
+
+
+# =============================================================================
+# 11. AI CODING ASSISTANTS — LOCAL CONFIG
+# =============================================================================
+#
+# AI assistant config is per-developer and often contains personal API keys
+# or machine-local settings. Never track.
+#
+# Rule: if an AI tool ever needs to share team-wide config (e.g., a system
+# prompt template), add a specific `!` exception for that file's path.
+# =============================================================================
+
+# --- Anthropic Claude / Claude Code ---
 .claude/
+.claude-*
+
+# --- Cursor ---
 .cursor/
+.cursorignore
+.cursorrules
+
+# --- Aider ---
 .aider*
+!.aider.conf.example.yml
+
+# --- Continue ---
 .continue/
+.continueignore
+
+# --- Cline / Roo Code ---
+.cline/
+.roo/
+
+# --- Windsurf ---
+.windsurf/
+
+# --- Copilot Chat local state ---
+.github/copilot-instructions.local.md
+
+# --- Generic local AI caches ---
+.ai-cache/
+.ai-config.local.json
 
 
-# -----------------------------------------------------------------------------
-# LOCAL DATABASES & DUMPS (Worker development only)
-# -----------------------------------------------------------------------------
+# =============================================================================
+# 12. LOCAL DATABASES & RUNTIME DATA (Worker development)
+# =============================================================================
+#
+# If the Worker ever gains persistence (KV, D1, R2, SQLite), local
+# development will generate database files and dump artifacts. These are
+# machine-specific state, never source.
+#
+# Currently unused (the Worker is stateless), but kept here so future
+# additions never accidentally commit a database.
+# =============================================================================
 
 worker/.local/
 worker/*.sqlite
 worker/*.sqlite-journal
+worker/*.sqlite-wal
+worker/*.sqlite-shm
 worker/*.db
 worker/*.db-journal
+worker/*.db-wal
+worker/*.db-shm
 worker/*.dump
+worker/*.schema.sql
+*.sqlite
+*.sqlite3
+*.db
+*.db3
+*.d1
+
+# --- Redis / Memcached local dumps ---
+dump.rdb
+*.rdb
+
+# --- Local server process PID files ---
+pids/
+*.pid
+*.pid.lock
+*.seed
+*.seed.lock
 
 
-# -----------------------------------------------------------------------------
-# PROJECT-SPECIFIC — PERSONAL / DRAFT FILES
-# -----------------------------------------------------------------------------
-# Draft notes and experiments that must never be deployed or published.
-# Uncomment individual lines if such files are created inside the repo root.
+# =============================================================================
+# 13. PROJECT-SPECIFIC — DRAFTS, EXPERIMENTS, PERSONAL FILES
+# =============================================================================
+#
+# Files that are useful during development but MUST NEVER reach production
+# or the public deploy (`public/`). Uncomment individual lines when the
+# corresponding file is actually created.
+#
+# IMPORTANT: `public/` is deployed verbatim by Cloudflare Pages. Anything
+# tracked under `public/` IS public. Never place drafts, personal notes,
+# or experiments under `public/` without an explicit ignore rule below.
+# =============================================================================
 
+# --- Draft documents and scratch notes ---
 # docs/*-draft.md
 # docs/*-scratch.md
+# docs/*-wip.md
+# docs/*-private.md
+# docs/notes-*.md
+
+# --- Tool-specific test fixtures (may contain real data) ---
 # public/tools/*/test-*.html
+# public/tools/*/fixtures/
+# public/tools/*/samples/
+
+# --- Design assets not yet ready for deploy ---
 # public/assets/img/og-image-draft.*
+# public/assets/img/screenshots/
+# public/assets/img/raw/
+# design/
+# figma-exports/
+
+# --- Personal B2B / outreach records (may contain names, emails) ---
+# docs/b2b-emails-sent.md
+# docs/b2b-pipeline.md
+# docs/b2b-contacts.csv
+# docs/b2b-notes.md
+
+# --- Deployment logs and personal runbooks ---
+# docs/deploy-log.md
+# docs/deploy-notes.md
+# docs/runbook.local.md
+
+# --- Backup files created during large refactors ---
+# *.pre-refactor
+# *.post-refactor
+# backups/
+# _backup/
+
+
+# =============================================================================
+# 14. EXPLICITLY *NOT* IGNORED — DO NOT ADD RULES AGAINST THESE
+# =============================================================================
+#
+# The following files and directories are SOURCE and MUST remain tracked in
+# Git. Adding them to .gitignore would break the project.
+#
+#   public/                      ← Cloudflare Pages deploy root (CRITICAL)
+#   public/index.html
+#   public/privacy.html
+#   public/terms.html
+#   public/pricing.html
+#   public/business.html
+#   public/404.html
+#   public/robots.txt
+#   public/sitemap.xml
+#   public/_headers             ← Cloudflare security headers (CRITICAL)
+#   public/_redirects           ← Cloudflare redirect rules (CRITICAL)
+#   public/favicon.svg
+#   public/assets/css/style.css
+#   public/assets/js/common.js
+#   public/assets/js/license.js
+#   public/assets/js/sdk.js
+#   public/assets/img/og-image.png
+#   public/tools/*/index.html
+#
+#   _template/tool.html          ← Master tool template
+#   worker/wrangler.toml         ← Worker config (source, not secrets)
+#   worker/package.json          ← Worker dependencies
+#   worker/package-lock.json     ← Worker lockfile (REPRODUCIBILITY)
+#   worker/src/index.js          ← Worker code
+#
+#   docs/launch-checklist.md
+#   docs/strategy.md
+#   docs/b2b-emails.md
+#
+#   README.md
+#   .gitignore                   ← this file
+#   .editorconfig                ← if ever added
+#   LICENSE                      ← if ever added
+#
+#   .env.example                 ← template (no real secrets, tracked)
+#   worker/.dev.vars.example     ← template (no real secrets, tracked)
+#
+# If any of the above appears as ignored by `git status --ignored`, the
+# pattern responsible must be fixed — never the file removed.
+#
+# Verify with:
+#   git check-ignore -v public/index.html          → should print nothing
+#   git check-ignore -v public/_headers            → should print nothing
+#   git check-ignore -v worker/wrangler.toml       → should print nothing
+#   git ls-files public/ | wc -l                   → should be > 0
+# =============================================================================
+
+
+# =============================================================================
+# 15. PRE-COMMIT VERIFICATION — RUN BEFORE EVERY COMMIT
+# =============================================================================
+#
+# These commands are the last gate before a secret hits Git history. Run
+# them, or make them a Git pre-commit hook (see `.husky/pre-commit` if
+# husky is ever adopted). Each command has an expected result.
+#
+#   ── 1. Secret files must NOT appear in `git status` ─────────────────────
+#     git status
+#       → .env, .dev.vars, *.pem must NOT be listed
+#
+#   ── 2. Confirm ignore rules match ───────────────────────────────────────
+#     git check-ignore -v .env
+#       → .gitignore:<line>:<pattern>    .env
+#     git check-ignore -v worker/.dev.vars
+#       → .gitignore:<line>:<pattern>    worker/.dev.vars
+#
+#   ── 3. Confirm source files are NOT ignored ────────────────────────────
+#     git check-ignore -v public/index.html
+#       → (no output; exit code 1 means "not ignored" — correct)
+#     git check-ignore -v worker/wrangler.toml
+#       → (no output; exit code 1 means "not ignored" — correct)
+#
+#   ── 4. Confirm no secret ever entered history ──────────────────────────
+#     git log --all --full-history -- "*.env"          → empty
+#     git log --all --full-history -- "*.dev.vars"     → empty
+#     git log --all --full-history -- "*.pem"          → empty
+#     git log --all --full-history -- "*.key"          → empty
+#     git log --all --full-history -- "*.p12"          → empty
+#
+#   ── 5. Confirm public/ is tracked ───────────────────────────────────────
+#     git ls-files public/ | wc -l
+#       → should be > 0 (typically 15–25 files)
+#
+#   ── 6. Optional: full secret scan with gitleaks ─────────────────────────
+#     npx gitleaks detect --source . --verbose
+#       → "no leaks found" (or fix anything it reports)
+#
+# If ANY of these checks fail, do not commit. Fix the root cause:
+#   • If a secret is tracked      → git rm --cached <file> + add rule
+#   • If a secret is in history   → rotate it, then purge history
+#   • If public/ is ignored       → find and delete the offending pattern
+# =============================================================================
+
+
+# =============================================================================
+# 16. WHEN TO UPDATE THIS FILE
+# =============================================================================
+#
+# Add a rule when:
+#   • A new npm package generates a cache directory       → §7 (Tool caches)
+#   • A new build tool is adopted (Vite, esbuild, etc.)   → §4 (Build output)
+#   • A new editor becomes common in the team             → §10 (Editors)
+#   • A new AI coding assistant is adopted                → §11 (AI)
+#   • A new local database is used (KV/D1/R2 emulation)   → §12 (Databases)
+#   • A new class of secret appears (e.g., webhook URL)   → §1  (Secrets)
+#
+# NEVER add a rule that:
+#   • Ignores `public/` or any file directly under it
+#   • Ignores `worker/wrangler.toml`, `worker/package.json`, or
+#     `worker/package-lock.json`
+#   • Ignores `_template/tool.html` or `docs/*.md`
+#   • Ignores the repository root `README.md` or this file
+#   • Uses a broad wildcard that could catch source files
+#     (e.g., `*.js` — this would ignore EVERY tool script)
+#   • Negates a secret rule with `!`
+#
+# When in doubt: run `git check-ignore -v <path>` before and after the
+# change to confirm the exact rule that matches.
+# =============================================================================
+
+
+# =============================================================================
+# END OF .gitignore
+# =============================================================================
+#
+# Last updated: 2026-10-24
+# Maintained by: Javidan Hasanov (cavidan56@proton.me)
+# Review cycle:  Every time a new dependency, tool, or secret class is added
+# Security review:  Required before merging any change to §1 or §2
+#
+# =============================================================================
